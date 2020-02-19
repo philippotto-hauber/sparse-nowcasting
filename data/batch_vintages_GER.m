@@ -1,8 +1,7 @@
 clear; close all; clc
-% needs to be run from C:\Users\Philipp\Google Drive\Prognose\Echtzeitdatensatz
-
-cd 'C:\Users\Philipp\Google Drive\Prognose\Echtzeitdatensatz'
-filename_out = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\in'
+% needs to be run from my IfW laptop where the raw files are stored!
+cd 'C:\Users\Hauber\Google Drive\Prognose\Echtzeitdatensatz'
+filename_out = 'C:\Users\Hauber\Documents\Dissertation\sparse nowcasting\data\in' ;
 
 [ vintages , Nvintages ] = f_getvintages( 2005 , 12 , 2018 , 12 ) ;
         
