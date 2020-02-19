@@ -332,7 +332,7 @@ function [ data_bos_level , data_bos_diff ] = f_load_BOS_data(filename_in, vinta
 % ------------------------------------------------------------------- %
 % -- MANUAL INPUT - NEEDS TO BE ADJUSTED IF XLS FILE CHANGES -------- %
 firstyear = 1968 ; firstmonth = 5 ; 
-finalyear = 2019 ; finalmonth = 1 ;
+finalyear = 2020 ; finalmonth = 1 ;
 % ------------------------------------------------------------------- %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -353,7 +353,7 @@ function [data_gdp_stand, dates_gdp, meangdp, stdgdp, truegdp] = f_load_gdp_data
 % ----------------------------------------------------------------------- %
 % -- MANUAL INPUT - NEEDS TO BE ADJUSTED IF XLS FILE CHANGES ------------ %
 firstyear = 1980 ; firstmonth = 1 ; % firstmonth = ceil(firstquarter/3)
-finalyear = 2018 ; finalmonth = 9 ; % finalmonth = finalquarter * 3
+finalyear = 2019 ; finalmonth = 6 ; % finalmonth = finalquarter * 3
 % ----------------------------------------------------------------------- %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
