@@ -9,7 +9,7 @@ addpath C:\Users\Philipp\Documents\IRIS_Tbx; irisstartup
 filename_in = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\in' ; 
 filename_out = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\out' ; 
 
-first_vintage = '2005-12' ; 
+first_vintage = '1999-12' ; 
 start_year = 2000 ;
 end_year = 2018 ;
 n_year = end_year - start_year + 1 ; 
@@ -21,7 +21,7 @@ n_year = end_year - start_year + 1 ;
 % vintages
 counter = 2 ; 
 vintages = cell(1,n_year*12+1) ; 
-vintages{1,1} = '1999-12' ; 
+vintages{1,1} = first_vintage ; 
 for y = start_year:end_year
     for m = 1:12
         if m<10
