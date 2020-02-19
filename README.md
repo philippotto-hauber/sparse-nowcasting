@@ -10,7 +10,7 @@ repo structure
 
 local file management structure
 
-* C:/Users/ * / Disseration/sparse nowcasting/
+C:/Users/ * / Disseration/sparse nowcasting/
   * data 
     * in
     * out
