@@ -1,7 +1,7 @@
 clear; close all; clc
 % needs to be run from my IfW laptop where the raw files are stored!
-cd 'C:\Users\Hauber\Google Drive\Prognose\Echtzeitdatensatz'
-filename_out = 'C:\Users\Hauber\Documents\Dissertation\sparse nowcasting\data\in' ;
+cd 'C:\Users\hauber\Google Drive\Prognose\Echtzeitdatensatz'
+filename_out = 'C:\Users\hauber\Documents\Dissertation\sparse nowcasting\data\in' ;
 
 [ vintages , Nvintages ] = f_getvintages( 2005 , 12 , 2018 , 12 ) ;
         

@@ -5,13 +5,13 @@ clear ; close all ; clc ;
 % - input
 % ------------------------------- %
 
-filename_in = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\in' ; 
-filename_out = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\out' ; 
+filename_in = 'C:\Users\hauber\Documents\Dissertation\sparse nowcasting\data\in' ; 
+filename_out = 'C:\Users\hauber\Documents\Dissertation\sparse nowcasting\data\out' ; 
 
 first_vintage = '2005-12' ; 
-start_year = 2006
-end_year = 2017
-n_year = 2017 - 2006 + 1 ; 
+start_year = 2006 ;
+end_year = 2018 ;
+n_years = 2018 - 2006 + 1 ; 
 
 % ------------------------------- %
 % - get vintages
@@ -35,7 +35,7 @@ Nvintages = length( vintages ) ;
 sample_start = 1992 + 1/12 ; 
 
 % load raw vintages
-load([filename_in] '\datasets_orig.mat')
+load([filename_in '\datasets_orig.mat'])
 datasets_temp = datasets ; clear datasets ; 
 
 % load IRIS
@@ -103,7 +103,7 @@ for v = 1 : Nvintages
     datasets.vintage( v ).vintage = vintages{ v } ; 
     datasets.vintage( v ).dates = dates_master( 1 : maxobs ) ;
 end
-save([filename_out] '\datasetsGER.mat','datasets')
+save([filename_out '\datasetsGER.mat'],'datasets')
 
 % ----------------------------------------------------------------------- %
 % -- FUNCTIONS ---------------------------------------------------------- %
@@ -121,5 +121,7 @@ for t = 1 : length( dates_num )
         temp = [num2str(date_year) '-' num2str(date_month)] ; 
     end
     dates_str{ t , 1 } = temp ; 
+end
+
 end
 
