@@ -9,7 +9,7 @@ end
 % ----------------------------------------------------------------------- %
 
 options.flag_samplemoments = 0 ;
-dir_out = '' ; 
+dir_out = '' ; % if not empty, needs to include \ at the end  
 
 Nvintages = 1:157 ; 
 Nrs = 1:10 ; 
@@ -41,20 +41,20 @@ options.priorswitch = Npriors_temp(Nspec) ;
 
 if modspec == 1
     % surveys in levels, recursive estimation window
-    flag_surveydiff = 0 ;
-    flag_rolling = 0 ; 
+    flag_surveydiff = 'level' ;
+    flag_rolling = 'rec' ; 
 elseif modspec == 2 
     % surveys in 1st diffs, recursive estimation window
-    flag_surveydiff = 1 ;
-    flag_rolling = 0 ;
+    flag_surveydiff = 'diff' ;
+    flag_rolling = 'rec' ;
 elseif modspec == 3
     % surveys in levels, rolling estimation window
-    flag_surveydiff = 0 ;
-    flag_rolling = 1 ;
+    flag_surveydiff = 'level' ;
+    flag_rolling = 'rolling' ;
 elseif modspec == 4
     % surveys in 1st diffs, rolling estimation window
-    flag_surveydiff = 1 ;
-    flag_rolling = 1 ;
+    flag_surveydiff = 'diff' ;
+    flag_rolling = 'rolling' ;
 end
 
 % ----------------------------------------------------------------------- %
@@ -65,7 +65,7 @@ load('datasetsGER.mat')
 options.vintagedate = datasets.vintage(v).vintage ; 
 options.modspec = modspec ;
 
-if flag_surveydiff == 1
+if strcmp(flag_surveydiff, 'diff')
     X = [ datasets.vintage(v).data_ifo_diff , ...
           datasets.vintage(v).data_bubartd( 2 : end , : ) , ...
           datasets.vintage(v).data_financial( 2 : end , :) ]' ; 
@@ -96,7 +96,7 @@ yQ = ( yQ - mean_gdp ) / std_gdp ;
 % ------------------
 % - recursive or rolling estimation window ?
 
-if flag_rolling == 1 
+if strcmp(flag_rolling, 'rolling') 
     yQ = yQ(1,end-120:end) ;
     X = X(:,end-120:end) ;
 end
@@ -122,10 +122,10 @@ end
 % ----------------------------------------------------------------------- %
 
 % options
-options.Nburnin = 1000 ; % # of burn-ins
-options.Nreplic = 1000 ; % # of replics
+options.Nburnin = 10 ; % # of burn-ins
+options.Nreplic = 10 ; % # of replics
 options.Nthin = 1 ; % store each options.thinning-th draw
-options.Ndisplay = 1000 ;  % display each options.display-th iteration
+options.Ndisplay = 10 ;  % display each options.display-th iteration
 
 % priors
 priors = loadpriors(options,options.priorswitch);
@@ -151,7 +151,7 @@ end
 % ----------------------------------------------------------------------- %
 % ----- save results to mat-file ---------------------------------------- %
 % ----------------------------------------------------------------------- %
-save([dir_out '\PH_GER_vint' num2str(Nvintages_temp(Nspec))  '_prior' num2str(Npriors_temps_temp(Nspec)) '_Nr' num2str(Nrs_temp(Nspec)) '_Np' num2str(Nps_temp(Nspec)) '_' flag_rolling '_survey' flag_surveydiff  '.mat'], 'draws');
+save([dir_out 'PH_GER_v' num2str(Nvintages_temp(Nspec))  '_prior' num2str(Npriors_temp(Nspec)) '_Nr' num2str(Nrs_temp(Nspec)) '_Np' num2str(Nps_temp(Nspec)) '_' flag_rolling '_' flag_surveydiff  '.mat'], 'draws');
 
 
 

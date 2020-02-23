@@ -1,239 +1,240 @@
 function draws = GibbsSampler( X , yQ , priors , options )
 
-% preallocate space for draws
-if options.flag_samplemoments == 0
-    draws.nowcast = NaN( 1  , options.Nreplic/options.Nthin ) ;
-    if options.Nh == 3
-        draws.forecast = NaN( 1 , options.Nreplic/options.Nthin ) ;
-    end
-elseif options.flag_samplemoments == 1
-    draws.nowcast_mean = NaN( 1  , options.Nreplic/options.Nthin ) ;
-    draws.nowcast_var = NaN( 1  , options.Nreplic/options.Nthin ) ;
-    if options.Nh == 3
-        draws.forecast_mean = NaN( 1 , options.Nreplic/options.Nthin ) ;
-        draws.forecast_var = NaN( 1 , options.Nreplic/options.Nthin ) ;
-    end
-end
-
-draws.flag_phi_prev = NaN( 1  , options.Nreplic/options.Nthin ) ; 
-
-% compute effective lag length
-options.Np_eff = max( [options.Np , 5 + options.Nr / options.Ns - 1 , options.Nr/options.Ns + options.Nj ] ) ; 
-
-% starting values
-[phi, Sigma, lambda, omega, rho] = f_startingvalues( X, yQ , options );
-
-
-if options.priorswitch == 2
-    % starting values for MG prior
-    psi = ones(options.Nm + options.Nq,options.Nr);
-    delta = ones(options.Nr,1);
-    tau = cumprod(delta);
-elseif options.priorswitch == 4
-% starting values for HS
-    hs_lam2 = ones(options.Nm+options.Nq,options.Nr);
-    hs_mu = nan(options.Nn,options.Nr);
-    for i=1:options.Nm+options.Nq
-        for j=1:options.Nr
-            hs_mu(i,j) = mean(1./gamrnd(1,1./(1+1/hs_lam2(i,j)),1,1000)); 
+    % preallocate space for draws
+    if options.flag_samplemoments == 0
+        draws.nowcast = NaN( 1  , options.Nreplic/options.Nthin ) ;
+        if options.Nh == 3
+            draws.forecast = NaN( 1 , options.Nreplic/options.Nthin ) ;
         end
-    end
-    hs_tau2 = 1 ; 
-    hs_xi = mean(1./gamrnd(1,1./(1+1/hs_tau2),1,1000));
-    hs_eta2 = ones(options.Nm+options.Nq,options.Nr);
-    hs_z = ones(options.Nm+options.Nq,options.Nr);
-end
-
-% iterations
-tic
-for m = 1:options.Nreplic + options.Nburnin
-    
-    if mod(m,options.Ndisplay)==0
-        disp('Number of iterations');
-        disp(m);toc;
-        disp('-------------------------------------------')
-        disp('-------------------------------------------')
-    end
-    % ------------------------------------------------------------------- %
-    % sample eta
-    % ------------------------------------------------------------------- %
-  
-    % ---------------------------- %
-    % - state space params
-    [T, Z, R, Q, H] = f_statespaceparams(phi,Sigma,lambda,omega,rho,options) ;
-
-    % ---------------------------- %
-    % - DK 2002
-    a1 = zeros( size( T , 1 ) , 1 ) ; % initial estimate of states...
-    % ... and their covariance matrix
-    P1 = eye(size(T, 1)) ;
-    
-    if options.Nj > 0     % quasi-difference monthly data
-        Xstar = f_qddata( X , rho( 1 : options.Nm , : ) );
-        data = [ Xstar ; yQ(:,options.Nj + 1 : end ) ]; 
-    else
-        data = [ X ; yQ ];
-    end
-    if options.flag_samplemoments == 0  
-        [ alpha_hat , alphaplus, ~] = f_DK2002( data , T , Z , R , Q , H , a1 , P1 , options ) ;
-
-        alpha = alpha_hat + alphaplus ; % random draw of state vector
-        
     elseif options.flag_samplemoments == 1
-        [alpha, aTT, PTT] = f_DK2002_twostep( data , Z , T , R , Q , H , a1 , P1 ) ;
-        
-        RQR = R * Q * R' ; 
+        draws.nowcast_mean = NaN( 1  , options.Nreplic/options.Nthin ) ;
+        draws.nowcast_var = NaN( 1  , options.Nreplic/options.Nthin ) ;
         if options.Nh == 3
-            hhs = [ 0 , 3 ] ;
-            [ densmean , densvar ] = f_dens_meanvar( aTT , PTT , Z , T , RQR , hhs , options ) ;
-        else 
-            hhs = options.Nh ;
-            [ densmean , densvar ] = f_dens_meanvar( aTT , PTT , Z , T , RQR , hhs , options ) ;
+            draws.forecast_mean = NaN( 1 , options.Nreplic/options.Nthin ) ;
+            draws.forecast_var = NaN( 1 , options.Nreplic/options.Nthin ) ;
         end
     end
-    
-    % ---------------------------- %
-    % - extract eta and eta lags
-    
-    eta = alpha( 1 : options.Ns , : )' ;    
-    etalags = alpha( 1 : options.Ns * options.Nr/options.Ns , : )' ; 
-    
-    % ---------------------------- %
-    % - compute y
-    y = ( lambda(options.Nm + 1 : end , : ) * alpha( 1 : options.Nr , : ) + alpha(options.Np_eff*options.Ns +  1 :options.Np_eff*options.Ns + options.Nq  , : ) )' ; 
-    
-    % ---------------------------- %
-    % - compute Xplus (Xstarplus)
-    Sigdraw = mvnrnd(zeros(options.Nm,1),diag(omega(1:options.Nm)),size(eta,1))' ;
-    Xtemp = Z( 1 : options.Nm , 1:options.Ns ) * eta' + Sigdraw  ;
-    if options.Nj > 0
-        Xstarplus = Xstar ; 
-        Xstarplus( isnan( Xstarplus ) ) = Xtemp( isnan( Xstarplus ) ) ;
-        Xplus = f_unqdXstarplus( X , Xstarplus , rho , options ) ;
-        Xstarplus = Xstarplus' ;
-        Xplus = Xplus';
-    else
-        Xplus = X ; 
-        Xplus( isnan( Xplus ) ) = Xtemp( isnan( Xplus ) ) ;
-        Xplus = Xplus' ;     
-    end    
-    
-    % --------------------------------------- %
-    % - mean and var of predictive density
-    if options.flag_samplemoments == 1
-        RQR = R * Q * R' ; 
-        if options.Nh == 3
-            hhs = [ 0 , 3 ] ;
-            [ densmean , densvar ] = f_dens_meanvar( aTT , PTT , Z , T , RQR , hhs , options ) ;
-        else 
-            hhs = options.Nh ;
-            [ densmean , densvar ] = f_dens_meanvar( aTT , PTT , Z , T , RQR , hhs , options ) ;
-        end
-    elseif options.flag_samplemoments == 0        
-    
-        % sample forecasts
-        % ------------------ 
-        Yqfore = NaN(length(options.Nh),options.Nq); 
-        Yfore = [y; NaN(max(options.Nh),options.Nq)];    
-        etafore = [eta; NaN(max(options.Nh),options.Ns)];
 
-        % simulate eta and Y max(options.Nh)-periods ahead    
-        for h = 1 : max(options.Nh)
-            % update etafore_vec
-            etafore_vec = []; for p = 1 : options.Np ;etafore_vec = [etafore_vec; etafore(end - max(options.Nh) + h - p,:)'];end        
-            % propagate factors forward
-            etafore(end-max(options.Nh)+h,:) = (phi*etafore_vec + chol(Sigma)*randn(options.Ns,1))';  
-            etalag = etafore(end-max(options.Nh)+h,:);
-            for s = 1 : options.Nr/options.Ns - 1
-                etalag = [etafore( end - max( options.Nh ) + h - s,:) etalag];
+    draws.flag_phi_prev = NaN( 1  , options.Nreplic/options.Nthin ) ; 
+
+    % compute effective lag length
+    options.Np_eff = max( [options.Np , 5 + options.Nr / options.Ns - 1 , options.Nr/options.Ns + options.Nj ] ) ; 
+
+    % starting values
+    [phi, Sigma, lambda, omega, rho] = f_startingvalues( X, yQ , options );
+
+
+    if options.priorswitch == 2
+        % starting values for MG prior
+        psi = ones(options.Nm + options.Nq,options.Nr);
+        delta = ones(options.Nr,1);
+        tau = cumprod(delta);
+    elseif options.priorswitch == 4
+    % starting values for HS
+        hs_lam2 = ones(options.Nm+options.Nq,options.Nr);
+        hs_mu = nan(options.Nn,options.Nr);
+        for i=1:options.Nm+options.Nq
+            for j=1:options.Nr
+                hs_mu(i,j) = mean(1./gamrnd(1,1./(1+1/hs_lam2(i,j)),1,1000)); 
             end
-
-            % compute Yplus(h,:)
-            Yfore(end-max(options.Nh)+h,:) = etalag * lambda( options.Nm + 1 : end , : )' + (chol(diag(omega( options.Nm + 1 : end , 1 ))) * randn(options.Nq,1))' ; 
         end
+        hs_tau2 = 1 ; 
+        hs_xi = mean(1./gamrnd(1,1./(1+1/hs_tau2),1,1000));
+        hs_eta2 = ones(options.Nm+options.Nq,options.Nr);
+        hs_z = ones(options.Nm+options.Nq,options.Nr);
+    end
 
-        % extract quarterly forecasts from Yfore
-        if options.Nh==3
-            nowcast = [1/3 2/3 3/3 2/3 1/3] * flipud(Yfore(end-7 : end-3)) ; 
-            forecast = [1/3 2/3 3/3 2/3 1/3] * flipud(Yfore(end-4 : end)) ; 
+    % iterations
+    tic
+    for m = 1:options.Nreplic + options.Nburnin
+
+        if mod(m,options.Ndisplay)==0
+            disp('Number of iterations');
+            disp(m);toc;
+            disp('-------------------------------------------')
+            disp('-------------------------------------------')
+        end
+        % ------------------------------------------------------------------- %
+        % sample eta
+        % ------------------------------------------------------------------- %
+
+        % ---------------------------- %
+        % - state space params
+        [T, Z, R, Q, H] = f_statespaceparams(phi,Sigma,lambda,omega,rho,options) ;
+
+        % ---------------------------- %
+        % - DK 2002
+        a1 = zeros( size( T , 1 ) , 1 ) ; % initial estimate of states...
+        % ... and their covariance matrix
+        P1 = eye(size(T, 1)) ;
+
+        if options.Nj > 0     % quasi-difference monthly data
+            Xstar = f_qddata( X , rho( 1 : options.Nm , : ) );
+            data = [ Xstar ; yQ(:,options.Nj + 1 : end ) ]; 
         else
-            nowcast = [1/3 2/3 3/3 2/3 1/3] * flipud(Yfore(end-4 : end)) ; 
+            data = [ X ; yQ ];
         end
-    end
-    
-    % ------------------------------------------------------------------- %
-    % sample lambda
-    % ------------------------------------------------------------------- %
-    
-    if options.Nj > 0
-        % qd y
-        ystar = f_qddata( y' , rho( options.Nm + 1 : end , : ) )' ; 
-        % sample lambda
-        if options.priorswitch == 1
-            [lambda, tauinv] = f_samplelambdaNIG([ Xstarplus( options.Nj + 1 : end , : ) ystar ],etalags,rho,lambda,omega,options,priors) ; 
-        elseif options.priorswitch == 2
-            [lambda, psi, tau, delta] = f_samplelambdaMG([ Xstarplus( options.Nj + 1 : end , : ) ystar ],etalags,rho,omega,psi,tau,delta,options,priors) ;
-        elseif options.priorswitch == 3
-            lambda = f_samplelambdaPMNM([ Xstarplus( options.Nj + 1 : end , : ) ystar ],etalags,rho,lambda,omega,options,priors) ;
-        elseif options.priorswitch == 4
-            [lambda, hs_lam2, hs_tau2, hs_mu, hs_xi, hs_eta2, hs_z] = f_samplelambdaHS([ Xstarplus( options.Nj + 1 : end , : ) ystar ],etalags,rho,omega,hs_lam2,hs_tau2,hs_mu,hs_xi,hs_eta2,hs_z,options,priors) ; 
-        elseif options.priorswitch == 5
-             lambda = f_samplelambdaNd([ Xplus y ],etalags,rho,omega,options,priors) ;        
-        end
-    else
-        % sample lambda
-        if options.priorswitch == 1
-            [lambda, ~] = f_samplelambdaNIG([ Xplus y ],etalags,rho,lambda,omega,options,priors) ;  
-        elseif options.priorswitch == 2
-            [lambda, psi, tau, delta] = f_samplelambdaMG([ Xplus y ],etalags,rho,omega,psi,tau,delta,options,priors) ; 
-        elseif options.priorswitch == 3
-            lambda = f_samplelambdaPMNM([ Xplus y ],etalags,rho,lambda,omega,options,priors) ;
-        elseif options.priorswitch == 4
-             [lambda, hs_lam2, hs_tau2, hs_mu, hs_xi, hs_eta2, hs_z] = f_samplelambdaHS([ Xplus y ],etalags,rho,omega,hs_lam2,hs_tau2,hs_mu,hs_xi,hs_eta2,hs_z,options,priors) ; 
-        elseif options.priorswitch == 5
-             lambda = f_samplelambdaNd([ Xplus y ],etalags,rho,omega,options,priors) ;        
-        end
-    end
-    
-    % ------------------------------------------------------------------- %
-    % sample phi_eps and Sigma_e
-    % ------------------------------------------------------------------- %
-    
-    eps = [Xplus y] - etalags*lambda'; 
-    if options.Nj > 0
-        [rho, e, flag_rho_prev] = f_samplerho(eps, rho, omega, options, priors); % for the time being, we only model AR-dynamics in the idiosyncratic components of the monthly vars
-        omega = f_samplesigma(e, priors.Omega_v, priors.Omega_delta);
-    else
-        omega = f_samplesigma(eps,priors.Omega_v,priors.Omega_delta);
-    end
-    
-    % ------------------------------------------------------------------- %
-    % sample phi_eta
-    % ------------------------------------------------------------------- %
-        
-    [ phi , flag_phi_prev ] = f_sample_phi_f( eta , phi , priors , options ) ;
+        if options.flag_samplemoments == 0  
+            [ alpha_hat , alphaplus, ~] = f_DK2002( data , T , Z , R , Q , H , a1 , P1 , options ) ;
 
-    % ------------------------------------------------------------------- %
-    % store draws
-    % ------------------------------------------------------------------- %
+            alpha = alpha_hat + alphaplus ; % random draw of state vector
 
-    if m > options.Nburnin && mod(m - options.Nburnin,options.Nthin) == 0        
-        if options.flag_samplemoments == 0
-            draws.nowcast( :  , (m - options.Nburnin)/options.Nthin ) = nowcast ;
-            if options.Nh == 3
-                draws.forecast( : , (m - options.Nburnin)/options.Nthin ) = forecast;
-            end
         elseif options.flag_samplemoments == 1
-            draws.nowcast_mean( :  , (m - options.Nburnin)/options.Nthin ) = densmean( 1 , 1 ) ;
-            draws.nowcast_var( :  , (m - options.Nburnin)/options.Nthin ) = densvar( 1 , 1 ) ;
+            [alpha, aTT, PTT] = f_DK2002_twostep( data , Z , T , R , Q , H , a1 , P1 ) ;
+
+            RQR = R * Q * R' ; 
             if options.Nh == 3
-                draws.forecast_mean( : , (m - options.Nburnin)/options.Nthin ) = densmean( 1 , 2 ) ;
-                draws.forecast_var( : , (m - options.Nburnin)/options.Nthin ) = densvar( 1 , 2 ) ;
+                hhs = [ 0 , 3 ] ;
+                [ densmean , densvar ] = f_dens_meanvar( aTT , PTT , Z , T , RQR , hhs , options ) ;
+            else 
+                hhs = options.Nh ;
+                [ densmean , densvar ] = f_dens_meanvar( aTT , PTT , Z , T , RQR , hhs , options ) ;
             end
         end
-        draws.flag_phi_prev( :  , (m - options.Nburnin)/options.Nthin ) = flag_phi_prev ;
-    end
-end   
+
+        % ---------------------------- %
+        % - extract eta and eta lags
+
+        eta = alpha( 1 : options.Ns , : )' ;    
+        etalags = alpha( 1 : options.Ns * options.Nr/options.Ns , : )' ; 
+
+        % ---------------------------- %
+        % - compute y
+        y = ( lambda(options.Nm + 1 : end , : ) * alpha( 1 : options.Nr , : ) + alpha(options.Np_eff*options.Ns +  1 :options.Np_eff*options.Ns + options.Nq  , : ) )' ; 
+
+        % ---------------------------- %
+        % - compute Xplus (Xstarplus)
+        Sigdraw = mvnrnd(zeros(options.Nm,1),diag(omega(1:options.Nm)),size(eta,1))' ;
+        Xtemp = Z( 1 : options.Nm , 1:options.Ns ) * eta' + Sigdraw  ;
+        if options.Nj > 0
+            Xstarplus = Xstar ; 
+            Xstarplus( isnan( Xstarplus ) ) = Xtemp( isnan( Xstarplus ) ) ;
+            Xplus = f_unqdXstarplus( X , Xstarplus , rho , options ) ;
+            Xstarplus = Xstarplus' ;
+            Xplus = Xplus';
+        else
+            Xplus = X ; 
+            Xplus( isnan( Xplus ) ) = Xtemp( isnan( Xplus ) ) ;
+            Xplus = Xplus' ;     
+        end    
+
+        % --------------------------------------- %
+        % - mean and var of predictive density
+        if options.flag_samplemoments == 1
+            RQR = R * Q * R' ; 
+            if options.Nh == 3
+                hhs = [ 0 , 3 ] ;
+                [ densmean , densvar ] = f_dens_meanvar( aTT , PTT , Z , T , RQR , hhs , options ) ;
+            else 
+                hhs = options.Nh ;
+                [ densmean , densvar ] = f_dens_meanvar( aTT , PTT , Z , T , RQR , hhs , options ) ;
+            end
+        elseif options.flag_samplemoments == 0        
+
+            % sample forecasts
+            % ------------------ 
+            Yqfore = NaN(length(options.Nh),options.Nq); 
+            Yfore = [y; NaN(max(options.Nh),options.Nq)];    
+            etafore = [eta; NaN(max(options.Nh),options.Ns)];
+
+            % simulate eta and Y max(options.Nh)-periods ahead    
+            for h = 1 : max(options.Nh)
+                % update etafore_vec
+                etafore_vec = []; for p = 1 : options.Np ;etafore_vec = [etafore_vec; etafore(end - max(options.Nh) + h - p,:)'];end        
+                % propagate factors forward
+                etafore(end-max(options.Nh)+h,:) = (phi*etafore_vec + chol(Sigma)*randn(options.Ns,1))';  
+                etalag = etafore(end-max(options.Nh)+h,:);
+                for s = 1 : options.Nr/options.Ns - 1
+                    etalag = [etafore( end - max( options.Nh ) + h - s,:) etalag];
+                end
+
+                % compute Yplus(h,:)
+                Yfore(end-max(options.Nh)+h,:) = etalag * lambda( options.Nm + 1 : end , : )' + (chol(diag(omega( options.Nm + 1 : end , 1 ))) * randn(options.Nq,1))' ; 
+            end
+
+            % extract quarterly forecasts from Yfore
+            if options.Nh==3
+                nowcast = [1/3 2/3 3/3 2/3 1/3] * flipud(Yfore(end-7 : end-3)) ; 
+                forecast = [1/3 2/3 3/3 2/3 1/3] * flipud(Yfore(end-4 : end)) ; 
+            else
+                nowcast = [1/3 2/3 3/3 2/3 1/3] * flipud(Yfore(end-4 : end)) ; 
+            end
+        end
+
+        % ------------------------------------------------------------------- %
+        % sample lambda
+        % ------------------------------------------------------------------- %
+
+        if options.Nj > 0
+            % qd y
+            ystar = f_qddata( y' , rho( options.Nm + 1 : end , : ) )' ; 
+            % sample lambda
+            if options.priorswitch == 1
+                [lambda, tauinv] = f_samplelambdaNIG([ Xstarplus( options.Nj + 1 : end , : ) ystar ],etalags,rho,lambda,omega,options,priors) ; 
+            elseif options.priorswitch == 2
+                [lambda, psi, tau, delta] = f_samplelambdaMG([ Xstarplus( options.Nj + 1 : end , : ) ystar ],etalags,rho,omega,psi,tau,delta,options,priors) ;
+            elseif options.priorswitch == 3
+                lambda = f_samplelambdaPMNM([ Xstarplus( options.Nj + 1 : end , : ) ystar ],etalags,rho,lambda,omega,options,priors) ;
+            elseif options.priorswitch == 4
+                [lambda, hs_lam2, hs_tau2, hs_mu, hs_xi, hs_eta2, hs_z] = f_samplelambdaHS([ Xstarplus( options.Nj + 1 : end , : ) ystar ],etalags,rho,omega,hs_lam2,hs_tau2,hs_mu,hs_xi,hs_eta2,hs_z,options,priors) ; 
+            elseif options.priorswitch == 5
+                 lambda = f_samplelambdaNd([ Xplus y ],etalags,rho,omega,options,priors) ;        
+            end
+        else
+            % sample lambda
+            if options.priorswitch == 1
+                [lambda, ~] = f_samplelambdaNIG([ Xplus y ],etalags,rho,lambda,omega,options,priors) ;  
+            elseif options.priorswitch == 2
+                [lambda, psi, tau, delta] = f_samplelambdaMG([ Xplus y ],etalags,rho,omega,psi,tau,delta,options,priors) ; 
+            elseif options.priorswitch == 3
+                lambda = f_samplelambdaPMNM([ Xplus y ],etalags,rho,lambda,omega,options,priors) ;
+            elseif options.priorswitch == 4
+                 [lambda, hs_lam2, hs_tau2, hs_mu, hs_xi, hs_eta2, hs_z] = f_samplelambdaHS([ Xplus y ],etalags,rho,omega,hs_lam2,hs_tau2,hs_mu,hs_xi,hs_eta2,hs_z,options,priors) ; 
+            elseif options.priorswitch == 5
+                 lambda = f_samplelambdaNd([ Xplus y ],etalags,rho,omega,options,priors) ;        
+            end
+        end
+
+        % ------------------------------------------------------------------- %
+        % sample phi_eps and Sigma_e
+        % ------------------------------------------------------------------- %
+
+        eps = [Xplus y] - etalags*lambda'; 
+        if options.Nj > 0
+            [rho, e, flag_rho_prev] = f_samplerho(eps, rho, omega, options, priors); % for the time being, we only model AR-dynamics in the idiosyncratic components of the monthly vars
+            omega = f_samplesigma(e, priors.Omega_v, priors.Omega_delta);
+        else
+            omega = f_samplesigma(eps,priors.Omega_v,priors.Omega_delta);
+        end
+
+        % ------------------------------------------------------------------- %
+        % sample phi_eta
+        % ------------------------------------------------------------------- %
+
+        [ phi , flag_phi_prev ] = f_sample_phi_f( eta , phi , priors , options ) ;
+
+        % ------------------------------------------------------------------- %
+        % store draws
+        % ------------------------------------------------------------------- %
+
+        if m > options.Nburnin && mod(m - options.Nburnin,options.Nthin) == 0        
+            if options.flag_samplemoments == 0
+                draws.nowcast( :  , (m - options.Nburnin)/options.Nthin ) = nowcast ;
+                if options.Nh == 3
+                    draws.forecast( : , (m - options.Nburnin)/options.Nthin ) = forecast;
+                end
+            elseif options.flag_samplemoments == 1
+                draws.nowcast_mean( :  , (m - options.Nburnin)/options.Nthin ) = densmean( 1 , 1 ) ;
+                draws.nowcast_var( :  , (m - options.Nburnin)/options.Nthin ) = densvar( 1 , 1 ) ;
+                if options.Nh == 3
+                    draws.forecast_mean( : , (m - options.Nburnin)/options.Nthin ) = densmean( 1 , 2 ) ;
+                    draws.forecast_var( : , (m - options.Nburnin)/options.Nthin ) = densvar( 1 , 2 ) ;
+                end
+            end
+            draws.flag_phi_prev( :  , (m - options.Nburnin)/options.Nthin ) = flag_phi_prev ;
+        end
+    end 
+end
 
 % ------------------------------------------------------------------- %
 % FUNCTIONS
@@ -295,6 +296,15 @@ function [T, Z, R, Q, H] = f_statespaceparams(phi,Sigma,lambda,omega,rho,options
 		Z2 = [LambdaQ zeros( options.Nq , options.Ns * options.Np_eff - size(LambdaQ,2) )  kron( [1/3 2/3 3/3 2/3 1/3] , eye( options.Nq ) ) ] ; 
 		Z = [ Z1; Z2 ] ; 
 	end
+end
+
+function LambdaQ = f_lambdaQ( lambdaQ , options )
+    LambdaQ = zeros( options.Nq , options.Ns *( 5 + options.Nr/options.Ns - 1 ) ) ;
+    tempaggr_rule = [ 1/3 2/3 3/3 2/3 1/3 ] ;
+    for q = 1 : length( tempaggr_rule ) 
+        LambdaQtemp = tempaggr_rule( q ) * lambdaQ ; 
+        LambdaQ = LambdaQ + [ zeros( options.Nq , ( q - 1 ) * options.Ns ) LambdaQtemp zeros( options.Nq ,  size(LambdaQ,2) - size(LambdaQtemp,2) - ( q - 1 ) * options.Ns ) ] ;     
+    end
 end
 
 function [ densmean , densvar ] = f_dens_meanvar( aTT , PTT , Z , T , RQR , hhs , options )
@@ -456,9 +466,10 @@ function lambda = f_samplelambdaPMNM(data,eta,rho,lambda_prev,omega,options,prio
 		lambda_r = zeros(options.Nm+options.Nq,1);
 		lambda_r(indic_nonzero <= PO,1) = drawmiMi(indic_nonzero <= PO);
 		lambda(:,r) = lambda_r;
-	end
+    end
+end
 		
-	function fd = f_pmultnormlog(y,prm,prv)
+function fd = f_pmultnormlog(y,prm,prv)
 
 	% auswerten einer multivariaten normalverteilung fuer verscheidene argumente mit verschiedenen
 	% parametern - ergebnis: log des funktionswertes
@@ -565,7 +576,7 @@ function [lambda, hs_lam2, hs_tau2, hs_mu, hs_xi, hs_eta2, hs_z] = f_samplelambd
 			hs_z = reshape(hs_z_vec,options.Nn,options.Nr);
 		
 		end
-	end
+    end
 end
 
 function lambda = f_samplelambdaNd(data,eta,rho,omega,options,priors)
@@ -639,3 +650,48 @@ function [ phi_f , flag_prev_val ] = f_sample_phi_f( f , phi_f_prev , priors , o
 		
 	end
 end
+
+function [ y_estim, X_estim ] = f_constructyandX( y , Np )
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % This function returns the regressand and regressors of Np-dimensional VAR
+    % of the form y = X * theta + e
+    %
+    % INPUTS: y - Nt x Nn matrix of observations
+    %         Np - lag length of VAR
+    % OUTPUT: y_estim - Nn * (Nt-Np) x 1 matrix of vectorized regressands => vec([y_Np+1 ... y_Nt])
+    %         X_estim - regressor matrix of dimensions Nn * (Nt-Np) x
+    %         Nn^2*Np + Nn => kron( I_Nn , [1 y_t-1' ... y_t-Np'] ) stacked over Nt-Np periods
+    %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % ------------------
+    % - get dimensions
+    % ------------------
+    [Nt, Nn] = size( y ) ;
+
+    % ------------------
+    % - y_estim => vectorized y
+    % ------------------
+
+    %y_estim = reshape( y( Np + 1 : Nt , : ) , Nn * ( Nt - Np ) , 1 ) ; 
+    y_estim = reshape( y( Np + 1 : Nt , : )' , Nn * ( Nt - Np ) , 1 ) ; 
+
+    % ------------------
+    % - X_estim 
+    % ------------------
+    X_estim = [] ; 
+
+    for t = Np + 1 : Nt
+        % X
+        ylags = [] ; 
+        for p = 1 : Np
+            ylags = [ylags y( t - p , :  ) ] ; 
+        end
+
+       Xtemp = kron( speye( Nn ) , ylags ) ;
+
+        X_estim = [ X_estim ;  Xtemp ] ; 
+    end
+end
+
+

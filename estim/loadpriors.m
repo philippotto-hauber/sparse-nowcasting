@@ -1,4 +1,4 @@
-function priors = f_loadpriors(options, priorspec)
+function priors = loadpriors(options, priorspec)
 
 % phi
 % -----
