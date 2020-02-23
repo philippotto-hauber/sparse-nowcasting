@@ -520,63 +520,69 @@ function [lambda, hs_lam2, hs_tau2, hs_mu, hs_xi, hs_eta2, hs_z] = f_samplelambd
 		mlam = Llam'\vlam; 
 		ylam = Llam'\zlam;
 		lambda(i,:) = (ylam + mlam)';  
-
-		if prior.flagHSplus==0
-
-			% -- update hs_lam2 -- %
-			lambda_vec = f_vec(lambda);
-			hs_mu_vec = f_vec(hs_mu);
-			hs_lam2_vec = 1./gamrnd(1,1./(1./hs_mu_vec + 0.5*(lambda_vec.^2)/hs_tau2));
-			hs_lam2 = reshape(hs_lam2_vec,options.Nn,options.Nr);
-
-			% -- update hs_tau2 -- %
-			NnNr = options.Nn*options.Nr;
-			hs_lam2_vec = f_vec(hs_lam2);
-			hs_tau2 = 1./gamrnd((NnNr+1)/2,1./(1./hs_xi + 0.5*sum((lambda_vec.^2)./hs_lam2_vec)));
-
-			% -- update hs_xi -- %
-			hs_xi = 1./gamrnd(1,1./(1+1/hs_tau2));
-			
-			% -- update hs_mu -- %
-			hs_mu_vec = 1./gamrnd(1,1./(1+1./hs_lam2_vec));
-			hs_mu = reshape(hs_mu_vec,options.Nn,options.Nr);
-
-			% dummies
-			hs_eta2 = nan;
-			hs_z = nan;
-			
-		elseif prior.flagHSplus==1
-
-			% -- update hs_lam2 -- %
-			lambda_vec = f_vec(lambda);
-			hs_mu_vec = f_vec(hs_mu);
-			hs_lam2_vec = 1./gamrnd(1,1./(1./hs_mu_vec + 0.5*(lambda_vec.^2)/hs_tau2));
-			hs_lam2 = reshape(hs_lam2_vec,options.Nn,options.Nr);
-
-			% -- update hs_tau2 -- %
-			NnNr = options.Nn*options.Nr;
-			hs_lam2_vec = f_vec(hs_lam2);
-			hs_tau2 = 1./gamrnd((NnNr+1)/2,1./(1./hs_xi + 0.5*sum((lambda_vec.^2)./hs_lam2_vec)));
-
-			% -- update hs_xi -- %
-			hs_xi = 1./gamrnd(1,1./(1+1/hs_tau2));
-			
-			% -- update hs_mu -- %
-			hs_eta2_vec=f_vec(hs_eta2);
-			hs_mu_vec = 1./gamrnd(1,1./(1./hs_eta2_vec+1./hs_lam2_vec));
-			hs_mu = reshape(hs_mu_vec,options.Nn,options.Nr);
-
-			% -- update hs_eta2 -- %
-			hs_z_vec=f_vec(hs_z);
-			hs_eta2_vec = 1./gamrnd(1,1./(1./hs_mu_vec+1./hs_z_vec));
-			hs_eta2 = reshape(hs_eta2_vec,options.Nn,options.Nr);
-			
-			% -- update hs_z -- %
-			hs_z_vec = 1./gamrnd(1,1./(1+1./hs_eta2_vec));
-			hs_z = reshape(hs_z_vec,options.Nn,options.Nr);
-		
-		end
     end
+
+    if prior.flagHSplus==0
+
+        % -- update hs_lam2 -- %
+        lambda_vec = f_vec(lambda);
+        hs_mu_vec = f_vec(hs_mu);
+        hs_lam2_vec = 1./gamrnd(1,1./(1./hs_mu_vec + 0.5*(lambda_vec.^2)/hs_tau2));
+        hs_lam2 = reshape(hs_lam2_vec,options.Nn,options.Nr);
+
+        % -- update hs_tau2 -- %
+        NnNr = options.Nn*options.Nr;
+        hs_lam2_vec = f_vec(hs_lam2);
+        hs_tau2 = 1./gamrnd((NnNr+1)/2,1./(1./hs_xi + 0.5*sum((lambda_vec.^2)./hs_lam2_vec)));
+
+        % -- update hs_xi -- %
+        hs_xi = 1./gamrnd(1,1./(1+1/hs_tau2));
+
+        % -- update hs_mu -- %
+        hs_mu_vec = 1./gamrnd(1,1./(1+1./hs_lam2_vec));
+        hs_mu = reshape(hs_mu_vec,options.Nn,options.Nr);
+
+        % dummies
+        hs_eta2 = nan;
+        hs_z = nan;
+
+    elseif prior.flagHSplus==1
+
+        % -- update hs_lam2 -- %
+        lambda_vec = f_vec(lambda);
+        hs_mu_vec = f_vec(hs_mu);
+        hs_lam2_vec = 1./gamrnd(1,1./(1./hs_mu_vec + 0.5*(lambda_vec.^2)/hs_tau2));
+        hs_lam2 = reshape(hs_lam2_vec,options.Nn,options.Nr);
+
+        % -- update hs_tau2 -- %
+        NnNr = options.Nn*options.Nr;
+        hs_lam2_vec = f_vec(hs_lam2);
+        hs_tau2 = 1./gamrnd((NnNr+1)/2,1./(1./hs_xi + 0.5*sum((lambda_vec.^2)./hs_lam2_vec)));
+
+        % -- update hs_xi -- %
+        hs_xi = 1./gamrnd(1,1./(1+1/hs_tau2));
+
+        % -- update hs_mu -- %
+        hs_eta2_vec=f_vec(hs_eta2);
+        hs_mu_vec = 1./gamrnd(1,1./(1./hs_eta2_vec+1./hs_lam2_vec));
+        hs_mu = reshape(hs_mu_vec,options.Nn,options.Nr);
+
+        % -- update hs_eta2 -- %
+        hs_z_vec=f_vec(hs_z);
+        hs_eta2_vec = 1./gamrnd(1,1./(1./hs_mu_vec+1./hs_z_vec));
+        hs_eta2 = reshape(hs_eta2_vec,options.Nn,options.Nr);
+
+        % -- update hs_z -- %
+        hs_z_vec = 1./gamrnd(1,1./(1+1./hs_eta2_vec));
+        hs_z = reshape(hs_z_vec,options.Nn,options.Nr);
+    end
+end
+
+function x = f_vec(X)
+    %
+    %
+    [m, n] = size(X);
+    x = reshape(X,m*n,1);
 end
 
 function lambda = f_samplelambdaNd(data,eta,rho,omega,options,priors)
