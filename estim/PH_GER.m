@@ -24,9 +24,9 @@ Nmod = 1:4 ;
 % calculate combinations of specifications
 Nrs_temp = repmat(Nrs, 1, length(Npriors) * length(Nvintages) * length(Nps) * length(Nmod)) ; 
 Npriors_temp = repmat(kron(Npriors, ones(1, length(Nrs))), 1 , length(Nvintages) * length(Nps) * length(Nmod)) ;
-Nvintages_temp = repmat(kron(Nvintages, ones(1, length(Nrs) * length(Nps))), 1, length(Nps) * length(Nmod)) ; 
-Nps_temp = repmat(kron(Nps, ones(1, length(Nrs) * length(Nps) * length(Nvintages))), 1, length(Nmod)) ;
-Nmod_temp = kron(Nmod, ones(1, length(Nrs) * length(Nps) * length(Nvintages) * length(Nps))) ;
+Nvintages_temp = repmat(kron(Nvintages, ones(1, length(Nrs) * length(Npriors))), 1, length(Nps) * length(Nmod)) ; 
+Nps_temp = repmat(kron(Nps, ones(1, length(Nrs) * length(Npriors) * length(Nvintages))), 1, length(Nmod)) ;
+Nmod_temp = kron(Nmod, ones(1, length(Nrs) * length(Npriors) * length(Nvintages) * length(Nps))) ;
 
 % back out current one
 modspec = Nmod_temp(Nspec) ; 
