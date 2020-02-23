@@ -9,7 +9,7 @@ end
 % ----------------------------------------------------------------------- %
 
 options.flag_samplemoments = 0 ;
-dir_out = '' ; % if not empty, needs to include \ at the end  
+dir_out = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\estim\PH_GER' ; % if not empty, needs to include \ at the end  
 
 Nvintages = 1:157 ; 
 Nrs = 1:10 ; 
@@ -122,10 +122,10 @@ end
 % ----------------------------------------------------------------------- %
 
 % options
-options.Nburnin = 10 ; % # of burn-ins
-options.Nreplic = 10 ; % # of replics
+options.Nburnin = 0 ; % # of burn-ins
+options.Nreplic = 2 ; % # of replics
 options.Nthin = 1 ; % store each options.thinning-th draw
-options.Ndisplay = 10 ;  % display each options.display-th iteration
+options.Ndisplay = 5 ;  % display each options.display-th iteration
 
 % priors
 priors = loadpriors(options,options.priorswitch);
