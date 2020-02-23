@@ -1,4 +1,4 @@
-function PH_GER_Nd( Nspec )
+function PH_GER( Nspec )
 if (isdeployed)
     maxNumCompThreads(1);
     Nspec = str2double(Nspec) ;
