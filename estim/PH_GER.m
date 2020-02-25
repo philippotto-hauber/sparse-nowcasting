@@ -123,7 +123,7 @@ end
 
 % options
 options.Nburnin = 0 ; % # of burn-ins
-options.Nreplic = 2 ; % # of replics
+options.Nreplic = 10 ; % # of replics
 options.Nthin = 1 ; % store each options.thinning-th draw
 options.Ndisplay = 5 ;  % display each options.display-th iteration
 
