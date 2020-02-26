@@ -9,7 +9,7 @@ end
 % ----------------------------------------------------------------------- %
 
 options.flag_samplemoments = 0 ;
-dir_out = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\estim\PH_GER\' ; % if not empty, needs to include \ at the end  
+dir_out = '' ; % if not empty, needs to include \ at the end  
 
 Nvintages = 1:157 ; 
 Nrs = 1:10 ; 
