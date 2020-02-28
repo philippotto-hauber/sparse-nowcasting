@@ -39,8 +39,8 @@ load([filename_in '\datasets_orig.mat'])
 datasets_temp = datasets ; clear datasets ; 
 
 % load IRIS
-%addpath C:\Users\Philipp\Documents\IRIS_Tbx; irisstartup
-addpath C:\Users\Hauber\Documents\IRIS_Tbx; irisstartup
+addpath C:\Users\Philipp\Documents\IRIS_Tbx; irisstartup
+%addpath C:\Users\Hauber\Documents\IRIS_Tbx; irisstartup
 
 for v = 1 : Nvintages
     
