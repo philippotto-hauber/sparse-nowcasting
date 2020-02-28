@@ -32,7 +32,7 @@ for y = start_year:end_year
 end
 Nvintages = length( vintages ) ; 
 
-sample_start = 1992 + 1/12 ; 
+sample_start = 1995 + 1/12 ; 
 
 % load raw vintages
 load([filename_in '\datasets_orig.mat'])
