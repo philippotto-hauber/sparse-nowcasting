@@ -5,8 +5,8 @@ clear ; close all ; clc ;
 % - input
 % ------------------------------- %
 
-filename_in = 'C:\Users\hauber\Documents\Dissertation\sparse nowcasting\data\in' ; 
-filename_out = 'C:\Users\hauber\Documents\Dissertation\sparse nowcasting\data\out' ; 
+filename_in = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\in' ; 
+filename_out = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\out' ; 
 
 first_vintage = '2005-12' ; 
 start_year = 2006 ;
