@@ -35,7 +35,7 @@ for y = start_year:end_year
 end
 
 % ------------------------------- %
-% - loop to construct vintages
+% - loop to compile vintages
 % ------------------------------- %
 
 samplestart_year = 1985 ;
@@ -43,7 +43,6 @@ samplestart_month = 1 ;
 samplestart = samplestart_year + samplestart_month / 12 ; 
 
 for v = 1 : length(vintages)
-   
     vintageyear = year(vintages{v},'yyyy-mm') ; 
     vintagemonth = month(vintages{v},'yyyy-mm') ;     
     vintageday = eomday(vintageyear, vintagemonth) ; % only needed for gdp vintages!
@@ -142,14 +141,33 @@ dates_num = dates_num( index_start : end , : ) ;
 % Transform raw data to be stationary using auxiliary function
 % prepare_missing()
 %ytold = prepare_missing( rawdata , tcode );
-% change trafo code from 4 to 5 for housing variables 
-housingvars = { 'HOUST' , 'HOUSTNE' , 'HOUSTMW' , 'HOUSTS' ,'HOUSTW' , 'PERMIT' , 'PERMITNE' , 'PERMITMW' , 'PERMITS' ,'PERMITW' } ;
-for i = 1 : length( housingvars )  
-    varindex = find( strcmp(series, housingvars{ i } ) == 1 ) ; 
+% change trafo code to 5 for a number of variables
+list_vars_change_trafo = { 'HOUST' , 'HOUSTNE' , 'HOUSTMW' , 'HOUSTS' ,'HOUSTW' , 'PERMIT' , 'PERMITNE' , 'PERMITMW' , 'PERMITS' ,'PERMITW', ... % housing variables		
+							'CES0600000008', 'CES2000000008', 'CES3000000008' , ... % average hourly earningsvars
+							 'WPSFD49207', 'WPSFD49502', 'WPSID61', 'WPSID62', 'OILPRICEx', 'PPICMM', ... % prices
+                             'NAPMPRI', 'CPIAUCSL', 'CPIAPPSL', 'CPITRNSL', 'CPIMEDSL', ...
+                             'CUSR0000SAC', 'CUSR0000SAD', 'CUSR0000SAS', 'CPIULFSL', ...
+                             'CUSR0000SA0L2', 'CUSR0000SA0L5', 'PCEPI', ...
+                             'DDURRG3M086SBEA', 'DNDGRG3M086SBEA', 'DSERRG3M086SBEA'} ; 
+                         
+yt_orig = prepare_missing( rawdata , tcode ) ;
+for i = 1 : length(list_vars_change_trafo )  
+    varindex = find( strcmp(series, list_vars_change_trafo{ i } ) == 1 ) ; 
+    %fprintf('var: %s, previous trafo %d\n', list_vars_change_trafo{ i }, tcode(varindex))
     tcode( varindex ) = 5 ; 
 end
 
 yt = prepare_missing( rawdata , tcode );
+
+% plot to compare old and new transformed series
+% for i = 1 : length(list_vars_change_trafo )  
+%     varindex = find( strcmp(series, list_vars_change_trafo{ i } ) == 1 ) ; 
+%     figure(1); subplot(2,1,1);plot(yt(:, varindex), 'r'); 
+%     title(['new trafo: ' list_vars_change_trafo{ i }]);
+%     subplot(2,1,2); plot(yt_orig(:, varindex), 'b');
+%     title(['original trafo: ' list_vars_change_trafo{ i }]); 
+%     pause ; 
+% end
 
 % remove outliers => done before Gibbs Sampler is called!
 %[yt , ~ ] = remove_outliers( yt ) ;
