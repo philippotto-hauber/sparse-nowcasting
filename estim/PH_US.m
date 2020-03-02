@@ -115,10 +115,10 @@ end
 % ----------------------------------------------------------------------- %
 
 % options
-options.Nburnin = 0 ; % # of burn-ins
-options.Nreplic = 10 ; % # of replics
-options.Nthin = 1 ; % store each options.thinning-th draw
-options.Ndisplay = 10 ;  % display each options.display-th iteration
+options.Nburnin = 5000 ; % # of burn-ins
+options.Nreplic = 10000 ; % # of replics
+options.Nthin = 10 ; % store each options.thinning-th draw
+options.Ndisplay = 1000 ;  % display each options.display-th iteration
 
 % priors
 priors = loadpriors(options,options.priorswitch);
