@@ -37,8 +37,7 @@ options.Np = Nps_temp(Nspec) ; % # of lags in factor VAR
 options.Nj = 0 ; % # of lags in eps
 options.priorswitch = Npriors_temp(Nspec) ;
 
-
-
+% model flag
 if modspec == 1
     % surveys in levels, recursive estimation window
     flag_surveydiff = 'level' ;
