@@ -22,6 +22,7 @@ C:/Users/ * / Disseration/sparse nowcasting
       - datasetsUS.mat
       - datasetsGER.mat
       - truegdpGER.mat (first, second, final realizations of German GDP from 2006Q1 until 2018Q4)
+      - truegdpUS.mat (first, second, final realizations of German GDP from 2000Q1 until 2018Q4)
     * /IRIS_Tbx: [IRIS toolbox](<https://iris.igpmn.org/>)
   * /estim
     * /PH_GER: mat-files of model outputs  
