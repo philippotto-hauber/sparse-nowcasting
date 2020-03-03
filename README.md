@@ -28,4 +28,6 @@ C:/Users/ * / Disseration/sparse nowcasting
     * /PH_GER: mat-files of model outputs  
   * /eval
     * /GER
-      - /benchmark B-AR(1) forecasts of GDP corresponding to the vintages in ../*/datasetsGER.mat 
+      - /benchmark: B-AR(1) forecasts of GDP corresponding to the vintages in ../*/datasetsGER.mat 
+    * /US
+      - /benchmark: B-AR(1) forecasts of GDP corresponding to the vintages in ../*/datasetsUS.mat 
