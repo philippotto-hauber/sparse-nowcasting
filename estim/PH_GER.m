@@ -49,11 +49,11 @@ elseif modspec == 2
 elseif modspec == 3
     % surveys in levels, rolling estimation window
     flag_surveydiff = 'level' ;
-    flag_rolling = 'rolling' ;
+    flag_rolling = 'roll' ;
 elseif modspec == 4
     % surveys in 1st diffs, rolling estimation window
     flag_surveydiff = 'diff' ;
-    flag_rolling = 'rolling' ;
+    flag_rolling = 'roll' ;
 end
 
 % ----------------------------------------------------------------------- %
