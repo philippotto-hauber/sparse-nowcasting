@@ -26,3 +26,6 @@ C:/Users/ * / Disseration/sparse nowcasting
     * /IRIS_Tbx: [IRIS toolbox](<https://iris.igpmn.org/>)
   * /estim
     * /PH_GER: mat-files of model outputs  
+  * /eval
+    * /GER
+      - /benchmark B-AR(1) forecasts of GDP corresponding to the vintages in ../*/datasetsGER.mat 
