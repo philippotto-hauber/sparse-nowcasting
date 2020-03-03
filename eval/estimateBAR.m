@@ -84,7 +84,7 @@ for i = 1 : length(list_countries)
             % - estimate B-AR(1)
             % ------------------------------------     
 
-            dens = f_BayARpreddens(yQ_stand,foreH,Np,pi1,pi2,10,5,10);
+            dens = f_BayARpreddens(yQ_stand,foreH,Np,pi1,pi2,10000,5000,10);
             draws.nowcast = stdgdp * dens(1 + flag_backcast , :  ) + meangdp ; 
             if foreH == 2 + flag_backcast 
                 draws.forecast = stdgdp * dens(2 + flag_backcast , : )  + meangdp ; 
