@@ -3,84 +3,95 @@ clear;close all;clc;
 % -------------------------------------------- %
 % - preliminaries
 
-cd 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\' ; 
-flag_country = 'GER' ; 
+dir_local = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\' ; 
+list_countries = {'GER', 'US'} ; 
 
-if strcmp(filename_country, 'PH_GER')
-	Nvintages = 157 ; 
-	filname_save = 'GER\benchmark\' ; 
-	load('..\data\out\datasetsGER.mat')
-elseif
-	strcmp(filename_country, 'PH_US')
-	Nvintages = 229 ; 
-	filname_save = 'US\benchmark\' ; 
-	load('..\data\out\datasetsUS.mat')
-end
+% -------------------------------------------- %
+% - loop over countries
 
-   
-% - B-AR(1) stuff
-% --------------------------
-pi1 = 3;
-pi2 = 2;
-Np = 1;
-yQ = 0 ; 
-for flag_rolling = [0 1]
-    if flag_rolling == 0 
-        name_flag_rolling = 'recursive' ;
-    elseif flag_rolling == 1 
-        name_flag_rolling = 'rolling' ;
+for i = 1 : length(list_countries)
+    flag_country = list_countries{i} ; 
+
+    if strcmp(flag_country, 'GER')
+        Nvintages = 157 ; 
+        filename_save = 'eval\GER\benchmark\' ; 
+        load([dir_local 'data\out\datasetsGER.mat'])
+    elseif strcmp(flag_country, 'US')
+        Nvintages = 229 ; 
+        filename_save = '\eval\US\benchmark\' ; 
+        load([dir_local 'data\out\datasetsUS.mat'])
     end
-      
-    for v = 1 : Nvintages
-        % - get vintage month
-        % -----------------------------
-        vintage_month = month(datasets.vintage(v).vintage) ; 
-        
-        vintage_year = year(datasets.vintage(v).vintage) ;
-        vintage_quarter = ceil( vintage_month / 3 ) ; 
 
-        % - update yQold
-        % -----------------------------
-        yQold = yQ ; 
 
-        % - get data
-        % -----------------------------    
-        y = datasets.vintage(v).data_gdp ;    
-        meangdp = nanmean( y ) ; 
-        stdgdp = nanstd( y ) ; 
-        yQ = y(~isnan(y)) ; 
-        datesQ = datasets.vintage(v).dates( ~isnan( y ) , : ) ; 
-        yQ_stand = yQ ; % data already standardized!!!!
-
-        % - check for rolling estimation window
-        if flag_rolling == 1
-            yQ = yQ(end-40+1:end) ; % 10-year rolling window
+    % - B-AR(1) stuff
+    % --------------------------
+    pi1 = 3;
+    pi2 = 2;
+    Np = 1;
+    yQ = 0 ; 
+    for flag_rolling = [0 1]
+        if flag_rolling == 0 
+            name_flag_rolling = 'rec' ;
+        elseif flag_rolling == 1 
+            name_flag_rolling = 'roll' ;
         end
 
-        % determine forecast horizon
-        % ----------------------------- 
-        if ismember(vintage_month,[1 4 7 10])
-            flag_backcast = 1 ; 
-        else
-            flag_backcast = 0 ; 
+        for v = 1 : Nvintages
+
+            % - update yQold
+            % -----------------------------
+            yQold = yQ ; 
+
+            % - get vintage month & data
+            % -----------------------------
+            if strcmp(flag_country, 'GER')
+                vintage_month = month(datasets.vintage(v).vintage) ;         
+
+                y = datasets.vintage(v).data_gdp ;    
+                meangdp = nanmean( y ) ; 
+                stdgdp = nanstd( y ) ; 
+                yQ = y(~isnan(y)) ; 
+                yQ_stand = yQ ; 
+
+            elseif strcmp(flag_country, 'US')
+                vintage_month = month(datasets(v).vintage) ; 
+
+                y = datasets(v).data_gdp ;     
+                meangdp = datasets(v).meangdp ; 
+                stdgdp  = datasets(v).stdgdp ;       
+                yQ_stand = y(~isnan(y)) ; 
+            end
+
+            % - check for rolling estimation window
+            if flag_rolling == 1
+                yQ_stand = yQ_stand(end-40+1:end) ; % 10-year rolling window
+            end
+
+            % determine forecast horizon
+            % ----------------------------- 
+            if ismember(vintage_month,[1 4 7 10])
+                flag_backcast = 1 ; 
+            else
+                flag_backcast = 0 ; 
+            end
+
+            if ismember(vintage_month,[3 6 9 12])
+                foreH = 2 + flag_backcast ;
+            else
+                foreH = 1 + flag_backcast ; 
+            end   
+
+            % - estimate B-AR(1)
+            % ------------------------------------     
+
+            dens = f_BayARpreddens(yQ_stand,foreH,Np,pi1,pi2,10,5,10);
+            draws.nowcast = stdgdp * dens(1 + flag_backcast , :  ) + meangdp ; 
+            if foreH == 2 + flag_backcast 
+                draws.forecast = stdgdp * dens(2 + flag_backcast , : )  + meangdp ; 
+            end
+
+            save([ dir_local filename_save '\PH_' flag_country '_v' num2str(v) '_' name_flag_rolling '.mat'],'draws')
         end
-        
-        if ismember(vintage_month,[3 6 9 12])
-            foreH = 2 + flag_backcast ;
-        else
-            foreH = 1 + flag_backcast ; 
-        end   
-        
-        % - estimate B-AR(1)
-        % ------------------------------------     
-            
-		dens = f_BayARpreddens(yQ_stand,foreH,Np,pi1,pi2,10,5,1);
-		draws.nowcast = stdgdp * dens(1 + flag_backcast , :  ) + meangdp ; 
-		if foreH == 2 + flag_backcast 
-			draws.forecast = stdgdp * dens(2 + flag_backcast , : )  + meangdp ; 
-		end
-		
-		save([ filename_save '\PH_' flag_country '_v' num2str(v) '_' name_flag_rolling '.mat'],'draws')
     end
 end
 
