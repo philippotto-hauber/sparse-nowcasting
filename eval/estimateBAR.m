@@ -1,4 +1,10 @@
 clear;close all;clc;
+% -------------------------------------------- %
+% - This code estimates benchmark B-AR(1) 
+% - models for US and German GDP. Throws an
+% - error if the data are not standardized
+% - prior to estimation
+% -------------------------------------------- %
 
 % -------------------------------------------- %
 % - preliminaries
@@ -48,24 +54,28 @@ for i = 1 : length(list_countries)
                 vintage_month = month(datasets.vintage(v).vintage) ;         
 
                 y = datasets.vintage(v).data_gdp ;    
-                meangdp = nanmean( y ) ; 
-                stdgdp = nanstd( y ) ; 
                 yQ = y(~isnan(y)) ; 
-                yQ_stand = yQ ; 
-
             elseif strcmp(flag_country, 'US')
                 vintage_month = month(datasets(v).vintage) ; 
-
-                y = datasets(v).data_gdp ;     
-                meangdp = datasets(v).meangdp ; 
-                stdgdp  = datasets(v).stdgdp ;       
-                yQ_stand = y(~isnan(y)) ; 
+                
+                % US GDP is already standardized, restandardize so that
+                % code works for both countries in the same way and we can
+                % standardize after possibly adjusting the estimation
+                % window
+                ystand = datasets(v).data_gdp ;     
+                y = datasets(v).meangdp + datasets(v).stdgdp * ystand ; 
+                yQ = y(~isnan(y)) ; 
             end
 
             % - check for rolling estimation window
             if flag_rolling == 1
-                yQ_stand = yQ_stand(end-40+1:end) ; % 10-year rolling window
+                yQ = yQ(end-40+1:end) ; % 10-year rolling window
             end
+            
+            % - standardize
+            meangdp = mean(yQ) ; 
+            stdgdp = std(yQ) ; 
+            yQ_stand = (yQ - meangdp) / stdgdp ; 
 
             % determine forecast horizon
             % ----------------------------- 
@@ -83,14 +93,18 @@ for i = 1 : length(list_countries)
 
             % - estimate B-AR(1)
             % ------------------------------------     
-
+            
+            if abs(mean(yQ_stand) - 0 ) > 1e-3 || abs(std(yQ_stand) - 1) > 1e-3
+                error('yQ_stand not standardized') ; 
+            end
+            
             dens = f_BayARpreddens(yQ_stand,foreH,Np,pi1,pi2,10000,5000,10);
             draws.nowcast = stdgdp * dens(1 + flag_backcast , :  ) + meangdp ; 
             if foreH == 2 + flag_backcast 
                 draws.forecast = stdgdp * dens(2 + flag_backcast , : )  + meangdp ; 
             end
 
-            save([ dir_local filename_save '\PH_' flag_country '_v' num2str(v) '_' name_flag_rolling '.mat'],'draws')
+            save([dir_local filename_save '\PH_' flag_country '_v' num2str(v) '_' name_flag_rolling '.mat'],'draws')
         end
     end
 end
