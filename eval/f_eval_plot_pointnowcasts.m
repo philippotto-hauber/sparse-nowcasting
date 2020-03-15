@@ -19,10 +19,15 @@ function f_eval_plot_pointnowcasts(flag_survey, flag_sample, flag_truegdp, Np, f
     % ----------------------------
     load([dir_truegdp 'truegdp' flag_country '.mat'])
     
-    % - filenames and graph labels
+    % - filenames and 
+    % --------------------------
     filename_ps = [dir_save 'graphs_pointnowcasts.ps'] ; 
     filename_pdf = [dir_save 'graphs_pointnowcasts.pdf'] ; 
-
+    
+    if isfile(filename_pdf); delete(filename_pdf); end
+    
+    % - graph labels
+    % --------------------------
     ylabelname = 'percent' ; 
     xtickslabelname = evaloptions.quarters_graph' ; 
     
