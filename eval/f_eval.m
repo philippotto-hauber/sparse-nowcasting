@@ -1,0 +1,262 @@
+function f_eval(evaloptions, flag_survey, flag_sample, Np, flag_country)
+
+    dir_truegdp = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\out\' ;
+    dir_models = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\estim\PH_' flag_country] ; 
+    dir_benchmark = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\GER\benchmark\' ; 
+    dir_out = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\GER\' flag_survey '_' flag_sample '\Np = ' num2str(Np) '\'] ; 
+    disp(dir_out)
+    if exist(dir_out, 'dir') ~= 7;mkdir(dir_out); end  
+
+    % - load true gdp mat-file ---
+    % ----------------------------
+    load([dir_truegdp 'truegdp' flag_country '.mat'])
+
+    % - start looping
+    % --------------------------
+
+    for p = 1:Npriorspecs
+        % - store prior names
+        % ------------------------
+        switch p
+            case 1
+                priorname = 'Normal-Inverse Gamma' ; 
+            case 2
+                priorname = 'Multiplicative Gamma' ; 
+            case 3
+                priorname = 'Point mass Normal mixture' ;
+            case 4
+                priorname = 'Horseshoe+' ;
+            case 5
+                priorname = 'Normal-diffuse' ;
+        end
+        results_eval.priors(p).name = priorname ; 
+        priorname
+
+        for q = 1 : Nquarters   
+            if strcmp(flag_truegdp,'first')
+                truegdp = multfac*truegdp_strct.first(q) ;
+                fname_gdp = strcat( fname_modspec_Np , '\' , flag_truegdp ) ;if exist(fname_gdp, 'dir') ~= 7;mkdir(fname_gdp);end  
+            elseif strcmp(flag_truegdp,'second')
+                truegdp = multfac*truegdp_strct.second(q) ;
+                fname_gdp = strcat( fname_modspec_Np , '\' , flag_truegdp ) ;if exist(fname_gdp, 'dir') ~= 7;mkdir(fname_gdp);end  
+            elseif strcmp(flag_truegdp,'final')
+                truegdp = multfac*truegdp_strct.final(q) ;
+                fname_gdp = strcat( fname_modspec_Np , '\' , flag_truegdp ) ;if exist(fname_gdp, 'dir') ~= 7;mkdir(fname_gdp);end
+            end
+
+            results_eval.quarters{q} = truegdp_strct.quarters{q} ;
+
+            % - get vintage indices
+            % ------------------------
+            [index_vs, flag_models_vs, flag_BAR_vs] = f_mapping_q_to_v(q,evaloptions.Nhs,flag_country) ; 
+            if Nhs ~= length(index_vs)    
+                disp('Number of vintages per quarter do not match. Abort execution')
+                return
+            end
+
+            for h = 1:length(index_vs)
+                dens_pool = cell( 1 , length( Nrs ) ) ; 
+                for index_r = 1 : length( Nrs ) + 1 % factors + equal weight pool
+
+                    % - create subfields
+                    % ------------------------
+                    if index_r == length( Nrs ) + 1 
+                        results_eval.priors(p).pool.horizon(1).name = 'h=3' ;
+                        results_eval.priors(p).pool.horizon(2).name = 'h=2' ;
+                        results_eval.priors(p).pool.horizon(3).name = 'h=1' ;
+                        results_eval.priors(p).pool.horizon(4).name = 'h=0' ; 
+                    else
+                        r = Nrs( index_r ) ;
+                        results_eval.priors(p).R(r).horizon(1).name = 'h=3' ;
+                        results_eval.priors(p).R(r).horizon(2).name = 'h=2' ;
+                        results_eval.priors(p).R(r).horizon(3).name = 'h=1' ;
+                        results_eval.priors(p).R(r).horizon(4).name = 'h=0' ; 
+                    end
+                     if r == 1
+
+                        % ------------------------------------------------------------------------ %
+                        % - benchmark: BAR(-1)
+                        % ------------------------------------------------------------------------ %
+
+                        % - load results mat-file
+                        % -------------------------
+                        load([dir_benchmark 'PH' flag_country '_v' num2str(index_vs(h)) '_' flag_sample '.mat'])
+
+                        % - select correct row and multiply with 100
+                        % -------------------------
+                        if flag_BAR_vs(h) == 1 % forecast
+                            draws_temp = multfac * draws.forecast( Nthin : Nthin : end ) ;
+                        else
+                            draws_temp = multfac * draws.nowcast( Nthin : Nthin : end ) ;
+                        end
+
+                        % - store density
+                        % -------------------------
+                        results_eval.benchmark_BAR.horizon(h).dens(q,:) = draws_temp ;
+
+                        % - compute log score, crps and forecast error
+                        % -----------------------------
+                        [results_eval.benchmark_BAR.horizon(h).sfe(q,1), results_eval.benchmark_BAR.horizon(h).logscore(q,1), results_eval.benchmark_BAR.horizon(h).crps(q,1)] = f_compute_sfe_logscore_crps(draws_temp,truegdp,flag_computelogscore);
+                    end
+
+                    % ------------------------------------------------------------------------ %
+                    % - models
+                    % ------------------------------------------------------------------------ %
+
+                    if index_r <= length( Nrs )
+                        % - load results mat-file
+                        % -------------------------
+                        load([dir_models '\PH_' flag_country '_v' num2str(index_vs(h)) '_prior' num2str(p) '_Nr' num2str(r) '_' num2str(Np) '_' flag_sample '_' flag_survey '.mat'])
+
+                        % - select correct row and multiply with multiplication factor
+                        % -------------------------
+                        if flag_models_vs(h) == 1 % forecast
+                            draws_temp = multfac * draws.forecast( Nthin : Nthin : end ) ;
+                        else
+                            draws_temp = multfac * draws.nowcast( Nthin : Nthin : end ) ;
+                        end     
+
+                        % - store density
+                        % -------------------------
+                        results_eval.priors(p).R(r).horizon(h).dens{q} = draws_temp ;  
+
+                        % - store for pool!
+                        % -------------------------
+                        dens_pool{r} = draws_temp ; 
+
+                        % - compute log score, crps and forecast error
+                        % -----------------------------
+                        [results_eval.priors(p).R(r).horizon(h).sfe(q,1), results_eval.priors(p).R(r).horizon(h).logscore(q,1), results_eval.priors(p).R(r).horizon(h).crps(q,1)] = f_compute_sfe_logscore_crps(draws_temp,truegdp,flag_computelogscore);
+                    else
+                        % equal weight pool
+                        results_eval.priors(p).pool.horizon(h).dens{q} = f_pooldens_eqwgts(dens_pool , evaloptions.Nmultpool*evaloptions.Ndraws ) ;
+                        [results_eval.priors(p).pool.horizon(h).sfe(q,1), results_eval.priors(p).pool.horizon(h).logscore(q,1), results_eval.priors(p).pool.horizon(h).crps(q,1)] = f_compute_sfe_logscore_crps( results_eval.priors(p).pool.horizon(h).dens{q} , truegdp , flag_computelogscore );
+                    end                    
+                end                        
+            end                    
+        end
+    end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [index_vs, flag_models, flag_BAR] = f_mapping_q_to_v(q,Nh,flag_country)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% This code maps the quarter q to the relevant vintages that produce
+%%%% now-/forecasts for that quarter. It returns an index of those 
+%%%% vintages - index_vs - as well as a flag of length(index_vs)
+%%%% highlighting the relation of that vintage to the nowcasting quarter.
+%%%% This is relevant for extracting the correct densities from the 
+%%%% saved output mat-files PH12_x_x_x and determining the forecast horizon
+%%%% in the naive B-AR model
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if strcmp(flag_country,'US')    
+index_vs = (q*3-2) + [0:Nh-1] ; 
+flag_models = zeros(1,length(index_vs)) ; 
+flag_models(1) = 1 ;
+flag_BAR = zeros(1,length(index_vs)) ;
+flag_BAR(1) = 1 ;
+elseif strcmp(flag_country,'GER')
+index_vs = (q*3-2) + [0:Nh-1] ; 
+flag_models = zeros(1,length(index_vs)) ; 
+flag_models(1) = 1 ;
+flag_BAR = zeros(1,length(index_vs)) ;
+flag_BAR(1) = 1 ;  % flag_BAR and flag_models should be the same!!!!!
+end
+end
+
+function denspool = f_pooldens_eqwgts(dens, Nreplics)
+
+denspool = NaN(1,Nreplics);
+Nmodels = size( dens , 2 ) ; 
+Ndraws = NaN( 1 , Nmodels ) ; 
+for i = 1 : Nmodels
+    Ndraws( i ) = length( dens{ i } ) ; 
+end
+minNdraws = min( Ndraws ) ; 
+
+for m = 1 : Nreplics
+    indic_dens = unidrnd( Nmodels );
+    indic_draws = unidrnd( minNdraws );
+    dens_temp = dens{ 1 , indic_dens } ;
+    denspool(1,m) = dens_temp( indic_draws );
+end
+end
+
+function [sfe, logscore, crps] = f_compute_sfe_logscore_crps(draws,truegdp,flag_computelogscore)
+
+sfe = mean((draws - truegdp).^2) ; % forecast error
+logscore = f_computelogscore(draws,truegdp,flag_computelogscore) ; 
+crps = f_computeCRPS(draws',truegdp) ; % crps
+
+end
+
+function logscore = f_computelogscore(draws,truegdp,flag_computelogscore)
+
+if strcmp( flag_computelogscore , 'kde')    
+    
+    % kernel density estimate following Chovez (2010) ????
+    [~,dens,xs,~]=kde(draws) ; 
+    index_truegdp = sum( xs <= truegdp ) ; 
+    logscore = log( dens( index_truegdp ) ) ; 
+    
+elseif strcmp( flag_computelogscore , 'ksdensity')
+    
+    % built-in MATLAB function with default settings
+    mindens = min( min( draws ) , truegdp ) ; 
+    maxdens = max( max( draws ) , truegdp ) ; 
+    rangedens = maxdens - mindens ; 
+    pts = ( mindens - rangedens / 10 ) : rangedens/ 100 : ( maxdens + rangedens / 10 ) ;
+    [dens,xs] = ksdensity(draws,pts) ;
+    index_truegdp = sum( xs <= truegdp ) ; 
+    logscore = log( dens( index_truegdp ) ) ; 
+    
+elseif strcmp( flag_computelogscore , 'normal approx')
+    
+    % assume predictive density is Normal
+    logscore = log( normpdf( truegdp , mean( draws ) , std( draws ) ) ) ;
+    
+end
+
+logscore = logscore * (-1) ; 
+end
+
+function crps = f_computeCRPS(X,y)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% This functions computes the continously ranked 
+%%% probability score (CRPS) following the empirical
+%%% CDF approach outlined in Krueger et al (2017)
+%%% "Probabilistic Forecasting and Comparative
+%%%  Model Assessement Based on Markov Chain 
+%%%  Monte Carlo Output
+%%% -----------------------------------------------------
+%%% INPUTS: X - mx1 vector of draws from the predictive density
+%%%         y - scalar realization
+%%% OUTPUT: scalar CRPS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ------------------
+% - equation 10
+% ------------------
+
+crps1 = sum(abs( X - y )) / length( X );
+
+crps2 = 0 ;
+for m = 1 : length(X)
+    crps2 = crps2 + sum( abs( X - X(m) ) ) ;
+end
+
+crps = crps1 - 1/( 2 * length(X) ^ 2 ) * crps2;
+end
+
+
+
+
+
+
+
+
+
