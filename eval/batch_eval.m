@@ -13,8 +13,8 @@ truegdps = {'first', 'second'} ;
 % ----------------------------
 % - switches -----------------
 % ----------------------------
-switch_eval_matfiles = 'off' ; 
-switch_eval_tables = 'off' ; 
+switch_eval_matfiles = 'on' ; 
+switch_eval_tables = 'on' ; 
 switch_eval_pointnowcasts = 'on' ; 
 
 for i1 = 1:length(samples) 
