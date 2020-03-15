@@ -25,8 +25,7 @@ dir_out = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\out' ;
 % ---------------------------
 
 [num,txt,~] = xlsread([dir_in '\Vintages_GDP_GER.xls']) ;
-num = num( 3 : end , : ) ; 
-dates = txt(6:end,1) ;
+dates = txt((size(txt,1)-size(num,1)-1):end,1) ;
 counter_q = 1 ; 
 for y = years 
     for q = quarters
@@ -42,7 +41,7 @@ for y = years
     end
 end
 
-save([dir_out '\truegdp.mat'],'truegdp_strct')
+save([dir_out '\truegdpGER.mat'],'truegdp_strct')
 
 function [index_col_first, index_col_second, index_col_final] = f_find_indexcols(num,index_row)
 
