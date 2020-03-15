@@ -1,10 +1,16 @@
-function f_eval(evaloptions, flag_survey, flag_sample, Np, flag_country)
+function f_eval(flag_survey, flag_sample, flag_truegdp, Np, flag_country)
 
+    % - options ---
+    % ----------------------------
+    
+    evaloptions = load_evaloptions(flag_country) ; 
+    
+    % - directories ---
+    % ----------------------------
     dir_truegdp = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\out\' ;
     dir_models = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\estim\PH_' flag_country] ; 
-    dir_benchmark = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\GER\benchmark\' ; 
-    dir_out = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\GER\' flag_survey '_' flag_sample '\Np = ' num2str(Np) '\'] ; 
-    disp(dir_out)
+    dir_benchmark = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\' flag_country '\benchmark\'] ; 
+    dir_out = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\' flag_country '\' flag_survey ' ' flag_sample '\Np = ' num2str(Np) '\' flag_truegdp '\'] ; 
     if exist(dir_out, 'dir') ~= 7;mkdir(dir_out); end  
 
     % - load true gdp mat-file ---
@@ -14,7 +20,7 @@ function f_eval(evaloptions, flag_survey, flag_sample, Np, flag_country)
     % - start looping
     % --------------------------
 
-    for p = 1:Npriorspecs
+    for p = 1:evaloptions.Npriorspecs
         % - store prior names
         % ------------------------
         switch p
@@ -32,16 +38,14 @@ function f_eval(evaloptions, flag_survey, flag_sample, Np, flag_country)
         results_eval.priors(p).name = priorname ; 
         priorname
 
-        for q = 1 : Nquarters   
+        %for q = 1 : evaloptions.Nquarters   
+        for q = 1 : 4 
             if strcmp(flag_truegdp,'first')
-                truegdp = multfac*truegdp_strct.first(q) ;
-                fname_gdp = strcat( fname_modspec_Np , '\' , flag_truegdp ) ;if exist(fname_gdp, 'dir') ~= 7;mkdir(fname_gdp);end  
+                truegdp = evaloptions.multfac*truegdp_strct.first(q) ;
             elseif strcmp(flag_truegdp,'second')
-                truegdp = multfac*truegdp_strct.second(q) ;
-                fname_gdp = strcat( fname_modspec_Np , '\' , flag_truegdp ) ;if exist(fname_gdp, 'dir') ~= 7;mkdir(fname_gdp);end  
+                truegdp = evaloptions.multfac*truegdp_strct.second(q) ;
             elseif strcmp(flag_truegdp,'final')
-                truegdp = multfac*truegdp_strct.final(q) ;
-                fname_gdp = strcat( fname_modspec_Np , '\' , flag_truegdp ) ;if exist(fname_gdp, 'dir') ~= 7;mkdir(fname_gdp);end
+                truegdp = evaloptions.multfac*truegdp_strct.final(q) ;
             end
 
             results_eval.quarters{q} = truegdp_strct.quarters{q} ;
@@ -49,24 +53,24 @@ function f_eval(evaloptions, flag_survey, flag_sample, Np, flag_country)
             % - get vintage indices
             % ------------------------
             [index_vs, flag_models_vs, flag_BAR_vs] = f_mapping_q_to_v(q,evaloptions.Nhs,flag_country) ; 
-            if Nhs ~= length(index_vs)    
+            if evaloptions.Nhs ~= length(index_vs)    
                 disp('Number of vintages per quarter do not match. Abort execution')
                 return
             end
 
             for h = 1:length(index_vs)
-                dens_pool = cell( 1 , length( Nrs ) ) ; 
-                for index_r = 1 : length( Nrs ) + 1 % factors + equal weight pool
+                dens_pool = cell( 1 , length( evaloptions.Nrs ) ) ; 
+                for index_r = 1 : length( evaloptions.Nrs ) + 1 % factors + equal weight pool
 
                     % - create subfields
                     % ------------------------
-                    if index_r == length( Nrs ) + 1 
+                    if index_r == length( evaloptions.Nrs ) + 1 
                         results_eval.priors(p).pool.horizon(1).name = 'h=3' ;
                         results_eval.priors(p).pool.horizon(2).name = 'h=2' ;
                         results_eval.priors(p).pool.horizon(3).name = 'h=1' ;
                         results_eval.priors(p).pool.horizon(4).name = 'h=0' ; 
                     else
-                        r = Nrs( index_r ) ;
+                        r = evaloptions.Nrs( index_r ) ;
                         results_eval.priors(p).R(r).horizon(1).name = 'h=3' ;
                         results_eval.priors(p).R(r).horizon(2).name = 'h=2' ;
                         results_eval.priors(p).R(r).horizon(3).name = 'h=1' ;
@@ -80,14 +84,14 @@ function f_eval(evaloptions, flag_survey, flag_sample, Np, flag_country)
 
                         % - load results mat-file
                         % -------------------------
-                        load([dir_benchmark 'PH' flag_country '_v' num2str(index_vs(h)) '_' flag_sample '.mat'])
+                        load([dir_benchmark 'PH_' flag_country '_v' num2str(index_vs(h)) '_' flag_sample '.mat'])
 
                         % - select correct row and multiply with 100
                         % -------------------------
                         if flag_BAR_vs(h) == 1 % forecast
-                            draws_temp = multfac * draws.forecast( Nthin : Nthin : end ) ;
+                            draws_temp = evaloptions.multfac * draws.forecast( evaloptions.Nthin : evaloptions.Nthin : end ) ;
                         else
-                            draws_temp = multfac * draws.nowcast( Nthin : Nthin : end ) ;
+                            draws_temp = evaloptions.multfac * draws.nowcast( evaloptions.Nthin : evaloptions.Nthin : end ) ;
                         end
 
                         % - store density
@@ -96,24 +100,24 @@ function f_eval(evaloptions, flag_survey, flag_sample, Np, flag_country)
 
                         % - compute log score, crps and forecast error
                         % -----------------------------
-                        [results_eval.benchmark_BAR.horizon(h).sfe(q,1), results_eval.benchmark_BAR.horizon(h).logscore(q,1), results_eval.benchmark_BAR.horizon(h).crps(q,1)] = f_compute_sfe_logscore_crps(draws_temp,truegdp,flag_computelogscore);
+                        [results_eval.benchmark_BAR.horizon(h).sfe(q,1), results_eval.benchmark_BAR.horizon(h).logscore(q,1), results_eval.benchmark_BAR.horizon(h).crps(q,1)] = f_compute_sfe_logscore_crps(draws_temp,truegdp,evaloptions.computelogscore);
                     end
 
                     % ------------------------------------------------------------------------ %
                     % - models
                     % ------------------------------------------------------------------------ %
 
-                    if index_r <= length( Nrs )
+                    if index_r <= length( evaloptions.Nrs )
                         % - load results mat-file
                         % -------------------------
-                        load([dir_models '\PH_' flag_country '_v' num2str(index_vs(h)) '_prior' num2str(p) '_Nr' num2str(r) '_' num2str(Np) '_' flag_sample '_' flag_survey '.mat'])
+                        load([dir_models '\PH_' flag_country '_v' num2str(index_vs(h)) '_prior' num2str(p) '_Nr' num2str(r) '_Np' num2str(Np) '_' flag_sample '_' flag_survey '.mat'])
 
                         % - select correct row and multiply with multiplication factor
                         % -------------------------
                         if flag_models_vs(h) == 1 % forecast
-                            draws_temp = multfac * draws.forecast( Nthin : Nthin : end ) ;
+                            draws_temp = evaloptions.multfac * draws.forecast( evaloptions.Nthin : evaloptions.Nthin : end ) ;
                         else
-                            draws_temp = multfac * draws.nowcast( Nthin : Nthin : end ) ;
+                            draws_temp = evaloptions.multfac * draws.nowcast( evaloptions.Nthin : evaloptions.Nthin : end ) ;
                         end     
 
                         % - store density
@@ -126,16 +130,20 @@ function f_eval(evaloptions, flag_survey, flag_sample, Np, flag_country)
 
                         % - compute log score, crps and forecast error
                         % -----------------------------
-                        [results_eval.priors(p).R(r).horizon(h).sfe(q,1), results_eval.priors(p).R(r).horizon(h).logscore(q,1), results_eval.priors(p).R(r).horizon(h).crps(q,1)] = f_compute_sfe_logscore_crps(draws_temp,truegdp,flag_computelogscore);
+                        [results_eval.priors(p).R(r).horizon(h).sfe(q,1), results_eval.priors(p).R(r).horizon(h).logscore(q,1), results_eval.priors(p).R(r).horizon(h).crps(q,1)] = f_compute_sfe_logscore_crps(draws_temp,truegdp,evaloptions.computelogscore);
                     else
                         % equal weight pool
                         results_eval.priors(p).pool.horizon(h).dens{q} = f_pooldens_eqwgts(dens_pool , evaloptions.Nmultpool*evaloptions.Ndraws ) ;
-                        [results_eval.priors(p).pool.horizon(h).sfe(q,1), results_eval.priors(p).pool.horizon(h).logscore(q,1), results_eval.priors(p).pool.horizon(h).crps(q,1)] = f_compute_sfe_logscore_crps( results_eval.priors(p).pool.horizon(h).dens{q} , truegdp , flag_computelogscore );
+                        [results_eval.priors(p).pool.horizon(h).sfe(q,1), results_eval.priors(p).pool.horizon(h).logscore(q,1), results_eval.priors(p).pool.horizon(h).crps(q,1)] = f_compute_sfe_logscore_crps( results_eval.priors(p).pool.horizon(h).dens{q} , truegdp , evaloptions.computelogscore );
                     end                    
                 end                        
             end                    
         end
     end
+    
+    % - save results to mat-file
+    % ----------------------------- 
+    save([dir_out 'results_eval.mat'],'results_eval')
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
