@@ -38,8 +38,7 @@ function f_eval(flag_survey, flag_sample, flag_truegdp, Np, flag_country)
         results_eval.priors(p).name = priorname ; 
         priorname
 
-        %for q = 1 : evaloptions.Nquarters   
-        for q = 1 : 4 
+        for q = 1 : evaloptions.Nquarters   
             if strcmp(flag_truegdp,'first')
                 truegdp = evaloptions.multfac*truegdp_strct.first(q) ;
             elseif strcmp(flag_truegdp,'second')
