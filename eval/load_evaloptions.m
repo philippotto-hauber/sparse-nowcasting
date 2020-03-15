@@ -9,9 +9,13 @@ evaloptions.Nmultpool = 1 ; % factor by which Ndraws is multiplied when pooling 
 if strcmp(flag_country, 'GER')
     evaloptions.Nquarters = 52; % # of quarters
     evaloptions.multfac = 1 ; 
+    evaloptions.indexstarts = [1 1 17] ; % 2006Q1 2006Q1 2010Q1
+    evaloptions.indexends =  [52 16 52] ; % 2018Q4 2009Q4 2018Q4
 elseif strcmp(flag_country, 'US')
     evaloptions.Nquarters = 76 ; 
     evaloptions.multfac = 100 ;
+    evaloptions.indexstarts = [1 1 41] ; % 2000Q1 2000Q1 2010Q1
+    evaloptions.indexends =  [76 40 76] ; % 2018Q4 2009Q4 2018Q4
 end
 
 evaloptions.computelogscore = 'ksdensity' ; 
