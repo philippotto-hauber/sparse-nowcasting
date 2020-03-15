@@ -14,7 +14,8 @@ truegdps = {'first', 'second'} ;
 % - switches -----------------
 % ----------------------------
 switch_eval_matfiles = 'off' ; 
-swtich_eval_tables = 'off' ; 
+switch_eval_tables = 'off' ; 
+switch_eval_pointnowcasts = 'on' ; 
 
 for i1 = 1:length(samples) 
     flag_sample = samples{i1} ; 
@@ -34,6 +35,11 @@ for i1 = 1:length(samples)
                     % call f_eval_tables
                     if strcmp(switch_eval_tables, 'on') 
                         f_eval_tables(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
+                    end
+                    
+                    % call f_eval_plot_pointnowcasts
+                    if strcmp(switch_eval_pointnowcasts, 'on') 
+                        f_eval_plot_pointnowcasts(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
                     end
                 end
             end
