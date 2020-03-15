@@ -1,13 +1,4 @@
-clear; close all; clc; 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% - manual input ---
-% ----------------------------
-flag_survey = 'level' ; 
-flag_sample = 'rec' ; 
-flag_truegdp = 'first' ; 
-Np = 1 ; 
-flag_country = 'US' ; 
+function f_eval_tables(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
 
 % - options ---
 % ----------------------------
