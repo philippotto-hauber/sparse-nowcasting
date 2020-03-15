@@ -28,6 +28,9 @@ C:/Users/ * / Disseration/sparse nowcasting
     * /PH_GER: mat-files of model outputs  
   * /eval
     * /GER
-      - /benchmark: B-AR(1) forecasts of GDP corresponding to the vintages in ../*/datasetsGER.mat 
+      - /benchmark: B-AR(1) forecasts of GDP corresponding to the vintages in ../*/datasetsGER.mat
+      - /level rec/.. result files
     * /US
       - /benchmark: B-AR(1) forecasts of GDP corresponding to the vintages in ../*/datasetsUS.mat 
+      - /level rec/.. result files
+    * /tables (linked): formatted evaluation tables that are linked to tables folders in /GER and /US
