@@ -24,8 +24,8 @@ dir_out = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\out' ;
 % ----- load GDP vintages ---
 % ---------------------------
 
-[num,txt,~] = xlsread([dir_in '\Vintages_GDP_GER.xls']) ;
-dates = txt((size(txt,1)-size(num,1)-1):end,1) ;
+[num,txt,raw] = xlsread([dir_in '\Vintages_GDP_GER.xls']) ;
+dates = txt((size(txt,1)-size(num,1)+1):end,1) ;
 counter_q = 1 ; 
 for y = years 
     for q = quarters
