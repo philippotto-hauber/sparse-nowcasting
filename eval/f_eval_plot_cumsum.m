@@ -35,7 +35,7 @@ function f_eval_plot_cumsum(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     
     for index_r = 1 : length( evaloptions.Nrs ) + 1
         if index_r <= length( evaloptions.Nrs )
-            r = Nrs( index_r ) ; 
+            r = evaloptions.Nrs( index_r ) ; 
         end
 
         for m = 1 : Nmetrics
@@ -62,14 +62,14 @@ function f_eval_plot_cumsum(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
 
                 for h = 1:evaloptions.Nhs
                     if index_r == ( length( evaloptions.Nrs ) + 1 )
-                        titlename = [name_country_long ', pool, ' results_eval.priors(1).pool.horizon(h).name ' (in months)'] ;
+                        titlename = [flag_country ', pool, ' results_eval.priors(1).pool.horizon(h).name ' (in months)'] ;
                     else
-                        titlename = [name_country_long ', R=' num2str(r) ', ' results_eval.priors(1).R(1).horizon(h).name ' (in months)'] ;
+                        titlename = [flag_country ', R=' num2str(r) ', ' results_eval.priors(1).R(1).horizon(h).name ' (in months)'] ;
                     end
-                    subplot(Nhs,1,h)
+                    subplot(evaloptions.Nhs,1,h)
 
                     temp_metric_benchmark = results_eval.benchmark_BAR.horizon(h).(metric)(indexstart:indexend) ; 
-
+                    temp_metric = [] ; 
                     for p = evaloptions.Npriorspecs
                         if index_r == ( length( evaloptions.Nrs ) + 1 )
                             temp_metric = [temp_metric results_eval.priors(p).pool.horizon(h).(metric)(indexstart:indexend)] ; 
@@ -107,26 +107,27 @@ function f_plot_cumul(data,titlename,ylabelname,xtickslabelname,metric)
     % cumulate data
     data_cumsum = cumsum(data) ; 
 
-    p1 = plot(data_cumsum(:,1),'Color',[0 0 0],'LineStyle',':','LineWidth',1.5);
+    p1 = plot(data_cumsum(:,1),'Color',[0.9 0 0],'LineStyle','-','LineWidth',1.5);
     hold on
     p2 = plot(data_cumsum(:,2),'Color',[1 .5 0],'LineStyle','-','LineWidth',1.5);
     p3 = plot(data_cumsum(:,3),'Color',[0.6 0 0.6],'LineStyle','-','LineWidth',1.5);
     p4 = plot(data_cumsum(:,4),'Color',[0 0 1],'LineStyle','-','LineWidth',1.5);
+    p5 = plot(data_cumsum(:,5),'Color',[0 0.5 0.5],'LineStyle','-','LineWidth',1.5);
     set(gca, 'FontSize', 7)
 
     % flip y-axis for squared forecast errors and CRPS
-    if strcmp( metric , 'sfe' ) || strcmp( metric , 'crps' )
-        set(gca, 'YDir','reverse')
-    end
+%     if strcmp( metric , 'sfe' ) || strcmp( metric , 'crps' )
+%         set(gca, 'YDir','reverse')
+%     end
 
     box off
     title(titlename,'Fontsize',10,'FontWeight','normal')
-    lgd = legend([p1 p2 p3 p4 p5 p6], ...
+    lgd = legend([p1 p2 p3 p4 p5], ...
+           'Nd',...
            'NIG', ...
            'MG',...
            'PMNM',...
-           'HS+',...
-           'Nd',...
+           'HS+',...           
            'Location','best') ;
     lgd.FontSize = 7;  
     ylabel(ylabelname,'Fontsize',7)
