@@ -63,7 +63,7 @@ function f_eval_plot_pointnowcasts(flag_survey, flag_sample, flag_truegdp, Np, f
                 fig.PaperOrientation = 'landscape';
                 if index_r == length( evaloptions.Nrs ) + 1
                     titlename = [flag_country ', pool, ' results_eval.priors(1).R(1).horizon(h).name ' (in months)'] ;
-                    for p = 1:evaloptions.Npriorspecs
+                    for p = evaloptions.Npriorspecs
                         counter_q = 1 ; 
                         for q = indexstart : indexend
                             dens_medians(p,counter_q) = median( results_eval.priors(p).pool.horizon(h).dens{q} ) ;
@@ -74,7 +74,7 @@ function f_eval_plot_pointnowcasts(flag_survey, flag_sample, flag_truegdp, Np, f
                     end
                 else
                     titlename = [flag_country ', R=' num2str(r) ', ' results_eval.priors(1).R(1).horizon(h).name ' (in months)'] ;
-                    for p = 1:evaloptions.Npriorspecs
+                    for p = evaloptions.Npriorspecs
                         counter_q = 1 ; 
                         for q = indexstart : indexend
                             dens_medians(p,counter_q) = median( results_eval.priors(p).R(r).horizon(h).dens{q} ) ;

@@ -20,7 +20,7 @@ function f_eval(flag_survey, flag_sample, flag_truegdp, Np, flag_country)
     % - start looping
     % --------------------------
 
-    for p = 1:evaloptions.Npriorspecs
+    for p = evaloptions.Npriorspecs
         % - store prior names
         % ------------------------
         switch p

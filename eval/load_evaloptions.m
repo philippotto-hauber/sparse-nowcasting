@@ -1,7 +1,7 @@
 function evaloptions = load_evaloptions(flag_country) 
 
     evaloptions.Nrs = 1:10 ; % # of factors
-    evaloptions.Npriorspecs = 5 ; % 1: Normal, 2: MG, 3: PMNM, 4: HS++
+    evaloptions.Npriorspecs = [5 1 2 3 4] ; % 1: Normal, 2: MG, 3: PMNM, 4: HS++ 5:Normal-diffuse
     evaloptions.Nthin = 1 ; % # use every Nthin-th draw
     evaloptions.Ndraws = 1000 ; % # of draws
     evaloptions.Nhs = 4 ; % # of horizons, i.e. nowcasts per quarter

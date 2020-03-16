@@ -47,7 +47,7 @@ for i = 1 : length(evaloptions.indexstarts)
             temp_logscore = [  mean(results_eval.benchmark_BAR.horizon(h).logscore(indexstart:indexend))] ;
             temp_crps = [ mean(results_eval.benchmark_BAR.horizon(h).crps(indexstart:indexend))] ; 
 
-            for p = 1 : evaloptions.Npriorspecs   
+            for p = evaloptions.Npriorspecs   
 
                     temp_rmsfe = [temp_rmsfe; sqrt(mean(results_eval.priors(p).R(r).horizon(h).sfe(indexstart:indexend)))] ;
                     temp_logscore = [temp_logscore; mean(results_eval.priors(p).R(r).horizon(h).logscore(indexstart:indexend))] ;
@@ -74,9 +74,9 @@ for i = 1 : length(evaloptions.indexstarts)
             logscore_all = [logscore_all ; rellogscore ] ; 
             crps_all = [crps_all ; relcrps ] ; 
         else
-            rmsfe_all = [rmsfe_all ; relrmsfe(end-evaloptions.Npriorspecs+1:end,:) ] ; 
-            logscore_all = [logscore_all ; rellogscore(end-evaloptions.Npriorspecs+1:end,:)  ] ; 
-            crps_all = [crps_all ; relcrps(end-evaloptions.Npriorspecs+1:end,:)  ] ; 
+            rmsfe_all = [rmsfe_all ; relrmsfe(end-length(evaloptions.Npriorspecs)+1:end,:) ] ; 
+            logscore_all = [logscore_all ; rellogscore(end-length(evaloptions.Npriorspecs)+1:end,:)  ] ; 
+            crps_all = [crps_all ; relcrps(end-length(evaloptions.Npriorspecs)+1:end,:)  ] ; 
         end
 
     end
@@ -95,7 +95,7 @@ for i = 1 : length(evaloptions.indexstarts)
         temp_crps = [ mean(results_eval.benchmark_BAR.horizon(h).crps(indexstart:indexend))] ; 
 
 
-        for p = 1:evaloptions.Npriorspecs   
+        for p = evaloptions.Npriorspecs   
 
                 temp_rmsfe = [temp_rmsfe; sqrt(mean(results_eval.priors(p).pool.horizon(h).sfe(indexstart:indexend)))] ;
                 temp_logscore = [temp_logscore; mean(results_eval.priors(p).pool.horizon(h).logscore(indexstart:indexend))] ;
@@ -117,9 +117,9 @@ for i = 1 : length(evaloptions.indexstarts)
     % - append pool to master arrays
     % --------------------------------------------             
          
-    rmsfe_all = [rmsfe_all ; relrmsfe_pool(end-evaloptions.Npriorspecs+1:end,:) ] ; 
-    logscore_all = [logscore_all ; rellogscore_pool(end-evaloptions.Npriorspecs+1:end,:)  ] ; 
-    crps_all = [crps_all ; relcrps_pool(end-evaloptions.Npriorspecs+1:end,:)  ] ; 
+    rmsfe_all = [rmsfe_all ; relrmsfe_pool(end-length(evaloptions.Npriorspecs)+1:end,:) ] ; 
+    logscore_all = [logscore_all ; rellogscore_pool(end-length(evaloptions.Npriorspecs)+1:end,:)  ] ; 
+    crps_all = [crps_all ; relcrps_pool(end-length(evaloptions.Npriorspecs)+1:end,:)  ] ; 
         
     % - save big table to xls
     % ------------------------------
