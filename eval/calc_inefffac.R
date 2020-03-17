@@ -49,7 +49,7 @@ for (country in Ncountries){
       for (Np in Nps){
         for (r in 1 : length(Nrs)) {
           Nr <- Nrs[ r ] 
-          for (prior in 1 : length(Npriors)){
+          for (prior in Npriors){
             for (Nvintage in 1 : Nvintages){
               # paste together filename
               filename <- paste0("PH_", country, 
@@ -86,7 +86,7 @@ for (country in Ncountries){
                                    data.frame(surveys = rep(survey, ncol(draws_mat)),
                                               sample = rep(sample, ncol(draws_mat)),
                                               Np = rep(Np, ncol(draws_mat)),
-                                              prior = rep(priors[ prior ], ncol(draws_mat)),
+                                              prior = rep(priors[prior], ncol(draws_mat)),
                                               country = rep(country, ncol(draws_mat)),
                                               vintage = rep(Nvintage, ncol(draws_mat)),
                                               value = ineff
