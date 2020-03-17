@@ -16,7 +16,12 @@ truegdps = {'first', 'second'} ;
 switch_eval_matfiles = 'off' ; 
 switch_eval_tables = 'off' ; 
 switch_eval_pointnowcasts = 'off' ; 
-switch_eval_cumsum = 'on' ; 
+switch_eval_cumsum = 'off' ; 
+switch_eval_densities = 'on' ; 
+
+% ----------------------------
+% - loop -----------------
+% ----------------------------
 for i1 = 1:length(samples) 
     flag_sample = samples{i1} ; 
     for i2 = 1:length(surveys) 
@@ -45,6 +50,11 @@ for i1 = 1:length(samples)
                     % call f_eval_plot_cumsum
                     if strcmp(switch_eval_cumsum, 'on') 
                         f_eval_plot_cumsum(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
+                    end
+                    
+                    % call f_eval_plot_cumsum
+                    if strcmp(switch_eval_densities, 'on') 
+                        f_eval_plot_densities(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
                     end
                 end
             end
