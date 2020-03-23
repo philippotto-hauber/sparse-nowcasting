@@ -6,6 +6,12 @@ flag_truegdp = 'first';
 Np = 1;
 flag_country = 'GER';
 
+if strcmp(flag_country, 'GER')
+    name_country = 'Germany';
+elseif strcmp(flag_country, 'US')
+    name_country = 'United States';
+end
+
 % dir in & out
 dir_load = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\' flag_country '\' flag_survey ' ' flag_sample '\Np = ' num2str(Np) '\' flag_truegdp '\'] ;
 dir_save = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\latex_tables\' ; 
@@ -32,7 +38,7 @@ load([dir_load 'results_eval.mat'])
 % table info
 Ncol_prior = 1; 
 Ncol_model_benchmark = 1;
-Ncols = length(evaloptions.names_subsamples) * length(evaloptions.Nhs) * length(evaloptions.metrics) + Ncol_prior + Ncol_model_benchmark;
+Ncols_per_sample = length(evaloptions.names_subsamples) * length(evaloptions.Nhs) * length(evaloptions.metrics);
 
 
 % open file
@@ -40,8 +46,24 @@ filename = ['table_' flag_country '_' flag_truegdp '_' flag_survey '_' flag_samp
 fid = fopen([dir_save filename], 'w'); 
 
 % upper body
-% caption
-% label
+str_label = 'label1';
+str_caption = 'captionA';
+fprintf(fid, ['\\begin{threeparttable}[p]\n\\caption{' str_caption '}\n\\label{' str_label '}\n\\scriptsize\n']);
+fprintf(fid, '\\begin{tabular}{ c l ');
+fprintf(fid, [repmat('c ', 1, Ncols_per_sample) '}\n\\toprule\n']);
+
+counter = 1;
+str_tmp = ['\\multicolumn{' num2str(Ncols_per_sample/length(evaloptions.names_subsamples)) '}{c}{' evaloptions.names_subsamples{counter} '}'];
+while counter < length(evaloptions.names_subsamples)
+    counter = counter + 1;
+    str_tmp = [str_tmp ['\\multicolumn{' num2str(Ncols_per_sample/length(evaloptions.names_subsamples)) '}{c}{' evaloptions.names_subsamples{counter} '}'] ' & '];
+end
+fprintf(fid, [' & & ' str_tmp]);
+% 		&		& \multicolumn{6}{c}{full sample} & \multicolumn{6}{c}{post-crisis sample} \\
+% 		&		& \multicolumn{2}{c}{RMSFE} & \multicolumn{2}{c}{logS} & \multicolumn{2}{c}{CRPS} &	\multicolumn{2}{c}{RMSFE} & \multicolumn{2}{c}{logS} & \multicolumn{2}{c}{CRPS}\\
+%  		&		& h=2 & h=0 & h=2 & h=0 & h=2 & h=0 & h=2 & h=0 & h=2 & h=0 & h=2 & h=0 \\ 	 
+% \midrule
+fprintf(fid, '\n\\midrule\n');
 
 % benchmark
 vals_bar = getvals(results_eval, [], [], 0, 1, evaloptions);
