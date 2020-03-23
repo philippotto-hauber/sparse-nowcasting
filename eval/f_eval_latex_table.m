@@ -36,7 +36,7 @@ Ncols = length(evaloptions.names_subsamples) * length(evaloptions.Nhs) * length(
 
 
 % open file
-filename = 'test.tex';
+filename = ['table_' flag_country '_' flag_truegdp '_' flag_survey '_' flag_sample '_Np' num2str(Np) '.tex'];
 fid = fopen([dir_save filename], 'w'); 
 
 % upper body
@@ -45,39 +45,42 @@ fid = fopen([dir_save filename], 'w');
 
 % benchmark
 vals_bar = getvals(results_eval, [], [], 0, 1, evaloptions);
-fprintf(fid, ['%s & & %.2f' repmat('& %.2f ', 1, length(vals_bar)-1), ' %.2f'], 'B-AR', vals_bar);
-fprintf(fid, '\\\\\n');
+addline(fid, vals_bar, 'B-AR', [])
+fprintf(fid, '\\hspace{0.5cm}\\\\\n');
 
 % loop over R's
 for r = evaloptions.Nrs
     for p = evaloptions.Npriorspecs
         vals = getvals(results_eval, p, r, 0, 0, evaloptions);
         if p == evaloptions.Npriorspecs(1) 
-            % print R=r in first column            
-            fprintf(fid, ['%s & %s & %.2f ' repmat('& %.2f ', 1, length(vals_bar)-1), ' %.2f'], ['R=' num2str(r)], evaloptions.names_priors{p}, vals ./ vals_bar);
-            fprintf(fid, '\\\\\n');
+            % print R=r in first column      
+            addline(fid, vals ./ vals_bar, ['R=' num2str(r)], evaloptions.names_priors{p})
         else
-            fprintf(fid, [' & %s & %.2f ' repmat('& %.2f ', 1, length(vals_bar)-1), ' %.2f'], evaloptions.names_priors{p}, vals ./ vals_bar);
-            fprintf(fid, '\\\\\n');
+            addline(fid, vals ./ vals_bar, '', evaloptions.names_priors{p})
         end
     end
+    fprintf(fid, '\\hspace{0.5cm}\\\\\n');
 end
 
 % pool (only loop over priors!)
 for p = evaloptions.Npriorspecs
     vals = getvals(results_eval, p, [], 1, 0, evaloptions);
     if p == evaloptions.Npriorspecs(1) 
-        % print R=r in first column            
-        fprintf(fid, ['%s & %s & %.2f ' repmat('& %.2f ', 1, length(vals_bar)-1), ' %.2f'], 'pool', evaloptions.names_priors{p}, vals ./ vals_bar);
-        fprintf(fid, '\\\\\n');
+        % print R=r in first column      
+        addline(fid, vals ./ vals_bar, 'pool', evaloptions.names_priors{p})
     else
-        fprintf(fid, [' & %s & %.2f ' repmat('& %.2f ', 1, length(vals_bar)-1), ' %.2f'], evaloptions.names_priors{p}, vals ./ vals_bar);
-        fprintf(fid, '\\\\\n');
+        addline(fid, vals ./ vals_bar, '', evaloptions.names_priors{p})
     end
 end
 
 % append lower body
+fprintf(fid, '\\bottomrule\n\\end{tabular}\n\\begin{tablenotes}\n\\scriptsize\n\\item ');
 
+% notes under tables (split across multiple fprintf's for convenience
+fprintf(fid, 'RMSFE, logS and CRPS for the models are relativ to the B-AR benchmark (see text for details)');
+fprintf(fid, 'The log score is negatively orientated so that a value in the table below 1 corresponds to a better performance than the benchmark.');
+fprintf(fid, 'Forecast horizon h is in months. The full sample period is 2000Q1-2018Q4, the post-crisis sample starts in 2010Q1 and ends in 2018Q4.'); 
+fprintf(fid, '\n\\end{tablenotes}\n\\end{threeparttable}\n');
 
 % close file
 fclose(fid);
@@ -109,6 +112,17 @@ function vals = getvals(results_eval, p, r, flag_pool, flag_benchmark, evaloptio
         end
     end
 end
+
+function addline(fid, vals, r_name, p_name)
+
+% add leading columns and values
+fprintf(fid, ['%s & %s & %.2f' repmat('& %.2f ', 1, length(vals)-1), ' %.2f'], r_name, p_name, vals);
+
+% add backslashes and new line
+fprintf(fid, '\\\\\n');
+
+end
+
 
 
 
