@@ -17,6 +17,9 @@ dir_load = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\' fl
 dir_save = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\latex_tables\' ; 
 if exist(dir_save, 'dir') ~= 7;mkdir(dir_save); end  
 
+% font size
+fontsize = 'tiny'; 
+
 % evaloptions (overwrite and amend)
 evaloptions = load_evaloptions(flag_country);
 
@@ -48,7 +51,7 @@ fid = fopen([dir_save filename], 'w');
 % upper body
 str_label = 'label1';
 str_caption = 'captionA';
-fprintf(fid, ['\\begin{threeparttable}[p]\n\\caption{' str_caption '}\n\\label{' str_label '}\n\\scriptsize\n']);
+fprintf(fid, ['\\begin{threeparttable}[p]\n\\caption{' str_caption '}\n\\label{' str_label '}\n\\' fontsize '\n']);
 fprintf(fid, '\\begin{tabular}{ c l ');
 fprintf(fid, [repmat('c ', 1, Ncols_per_sample) '}\n\\toprule\n']);
 
@@ -56,19 +59,32 @@ counter = 1;
 str_tmp = ['\\multicolumn{' num2str(Ncols_per_sample/length(evaloptions.names_subsamples)) '}{c}{' evaloptions.names_subsamples{counter} '}'];
 while counter < length(evaloptions.names_subsamples)
     counter = counter + 1;
-    str_tmp = [str_tmp ['\\multicolumn{' num2str(Ncols_per_sample/length(evaloptions.names_subsamples)) '}{c}{' evaloptions.names_subsamples{counter} '}'] ' & '];
+    str_tmp = [str_tmp [' & \\multicolumn{' num2str(Ncols_per_sample/length(evaloptions.names_subsamples)) '}{c}{' evaloptions.names_subsamples{counter} '}']];
 end
-fprintf(fid, [' & & ' str_tmp]);
-% 		&		& \multicolumn{6}{c}{full sample} & \multicolumn{6}{c}{post-crisis sample} \\
-% 		&		& \multicolumn{2}{c}{RMSFE} & \multicolumn{2}{c}{logS} & \multicolumn{2}{c}{CRPS} &	\multicolumn{2}{c}{RMSFE} & \multicolumn{2}{c}{logS} & \multicolumn{2}{c}{CRPS}\\
-%  		&		& h=2 & h=0 & h=2 & h=0 & h=2 & h=0 & h=2 & h=0 & h=2 & h=0 & h=2 & h=0 \\ 	 
-% \midrule
-fprintf(fid, '\n\\midrule\n');
+fprintf(fid, [' & & ' str_tmp '\\\\\n']);
+
+counter = 1;
+str_tmp = ['\\multicolumn{' num2str(length(evaloptions.Nhs)) '}{c}{' evaloptions.names_metrics{counter} '}'];
+while counter < length(evaloptions.names_metrics)
+    counter = counter + 1;
+    str_tmp = [str_tmp [' & \\multicolumn{' num2str(length(evaloptions.Nhs)) '}{c}{' evaloptions.names_metrics{counter} '}']];
+end
+fprintf(fid, [' & & ' [repmat(str_tmp, 1, length(evaloptions.names_subsamples)-1) ' & ' str_tmp] '\\\\\n']);
+
+counter = 1;
+str_tmp = results_eval.priors(1).R(1).horizon(evaloptions.Nhs(counter)).name;
+while counter < length(evaloptions.Nhs)
+    counter = counter + 1;
+    str_tmp = [str_tmp [' & ' results_eval.priors(1).R(1).horizon(evaloptions.Nhs(counter)).name]];
+end
+fprintf(fid, [' & & ' repmat([str_tmp ' & '], 1, length(evaloptions.metrics) * length(evaloptions.names_subsamples)-1) str_tmp '\\\\\n']);
+
+fprintf(fid, '\\midrule\n');
 
 % benchmark
 vals_bar = getvals(results_eval, [], [], 0, 1, evaloptions);
 addline(fid, vals_bar, 'B-AR', [])
-fprintf(fid, '\\hspace{0.5cm}\\\\\n');
+fprintf(fid, '\\hspace{0.1cm}\\\\\n');
 
 % loop over R's
 for r = evaloptions.Nrs
@@ -81,7 +97,7 @@ for r = evaloptions.Nrs
             addline(fid, vals ./ vals_bar, '', evaloptions.names_priors{p})
         end
     end
-    fprintf(fid, '\\hspace{0.5cm}\\\\\n');
+    fprintf(fid, '\\hspace{0.1cm}\\\\\n');
 end
 
 % pool (only loop over priors!)
@@ -96,7 +112,7 @@ for p = evaloptions.Npriorspecs
 end
 
 % append lower body
-fprintf(fid, '\\bottomrule\n\\end{tabular}\n\\begin{tablenotes}\n\\scriptsize\n\\item ');
+fprintf(fid, '\\bottomrule\n\\end{tabular}\n\\begin{tablenotes}\n\\' fontsize '\n\\item ');
 
 % notes under tables (split across multiple fprintf's for convenience
 fprintf(fid, 'RMSFE, logS and CRPS for the models are relativ to the B-AR benchmark (see text for details)');
@@ -138,7 +154,7 @@ end
 function addline(fid, vals, r_name, p_name)
 
 % add leading columns and values
-fprintf(fid, ['%s & %s & %.2f' repmat('& %.2f ', 1, length(vals)-1), ' %.2f'], r_name, p_name, vals);
+fprintf(fid, ['%s & %s & %.2f' repmat(' & %.2f ', 1, length(vals)-1), ' %.2f'], r_name, p_name, vals);
 
 % add backslashes and new line
 fprintf(fid, '\\\\\n');
