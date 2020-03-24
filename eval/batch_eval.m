@@ -7,17 +7,17 @@ Nps = [1] ;
 countries = {'GER', 'US'} ; 
 samples = {'rec'} ; 
 surveys = {'level'} ; 
-truegdps = {'first', 'second'} ; 
+truegdps = {'first'} ; 
 
 
 % ----------------------------
 % - switches -----------------
 % ----------------------------
-switch_eval_matfiles = 'off' ; 
-switch_eval_tables = 'off' ; 
-switch_eval_pointnowcasts = 'off' ; 
-switch_eval_cumsum = 'off' ; 
-switch_eval_densities = 'on' ; 
+switch_eval_matfiles = 'on' ; 
+switch_eval_tables = 'on' ; 
+switch_eval_pointnowcasts = 'on' ; 
+switch_eval_cumsum = 'on' ; 
+switch_eval_densities = 'off' ; 
 
 % ----------------------------
 % - loop -----------------

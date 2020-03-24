@@ -6,7 +6,7 @@ function evaloptions = load_evaloptions(flag_country)
     evaloptions.Ndraws = 1000 ; % # of draws
     evaloptions.Nhs = 4 ; % # of horizons, i.e. nowcasts per quarter
     evaloptions.Nmultpool = 1 ; % factor by which Ndraws is multiplied when pooling (to get "smoother" pools!)
-    evaloptions.computelogscore = 'ksdensity' ; 
+    evaloptions.computelogscore = 'normal approx' ; 
     if strcmp(flag_country, 'GER')
         evaloptions.Nquarters = 52; % # of quarters
         evaloptions.multfac = 1 ; 
