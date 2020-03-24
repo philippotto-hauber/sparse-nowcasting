@@ -17,21 +17,15 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     linestep = '0.1'; % step size between model blocks
 
     evaloptions.Nhs = [2, 4] ; % forecast horizons
-    evaloptions.Nhs = [1, 2, 4] ; % forecast horizons
 
     % subsamples
     evaloptions.indexstarts = evaloptions.indexstarts([1 3]);
     evaloptions.indexends = evaloptions.indexends([1 3]);
     evaloptions.names_subsamples = {'full sample', 'post-crisis sample'};
-    evaloptions.indexstarts = evaloptions.indexstarts([1]);
-    evaloptions.indexends = evaloptions.indexends([1]);
-    evaloptions.names_subsamples = {'full sample'};
-    
+
     % forecast evaluation metrics
     evaloptions.metrics = {'sfe', 'logscore', 'crps'}; 
     evaloptions.names_metrics = {'RMSFE', 'logS', 'CRPS'}; 
-    evaloptions.metrics = {'sfe', 'logscore'}; 
-    evaloptions.names_metrics = {'RMSFE', 'logS'}; 
     
     % prior names
     evaloptions.names_priors = {'NIG', 'MG', 'PMNM', 'HS', 'Nd'};
@@ -62,15 +56,22 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     fprintf(fid, '\\begin{tabular}{ c l');
 
     tmp1 = repmat(' c ', 1, length(evaloptions.Nhs));
-    tmp2 = [repmat([tmp1 ' | '], 1, length(evaloptions.metrics) - 1) tmp1];
     counter = 1;
-    tmp3 = tmp2;
-    while counter < length(evaloptions.names_subsamples)
+    tmp2 = tmp1; 
+    while counter < length(evaloptions.metrics)
+        tmp2 = [tmp2 ' | ' tmp1];
         counter = counter + 1;
-        tmp3 = [tmp3 ' !{\\vrule width 0.7pt} ' tmp2];
     end
+    
+    counter = 1; 
+    tmp3 = tmp2; 
+    while counter < length(evaloptions.names_subsamples)        
+        tmp3 = [tmp3 ' !{\\vrule width 0.7pt} ' tmp2];
+        counter = counter + 1;
+    end
+    
     fprintf(fid,[tmp3 '}\n\\toprule\n']);
-
+    
     counter = 1;
     str_tmp = ['\\multicolumn{' num2str(Ncols_per_sample/length(evaloptions.names_subsamples)) '}{c}{' evaloptions.names_subsamples{counter} '}'];
     while counter < length(evaloptions.names_subsamples)
@@ -85,7 +86,14 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
         counter = counter + 1;
         str_tmp = [str_tmp [' & \\multicolumn{' num2str(length(evaloptions.Nhs)) '}{c}{' evaloptions.names_metrics{counter} '}']];
     end
-    fprintf(fid, [' & & ' [repmat(str_tmp, 1, length(evaloptions.names_subsamples)-1) ' & ' str_tmp] '\\\\\n']);
+    
+    counter = 1;
+    fprintf(fid, [' & & ' str_tmp]); 
+    while counter < length(evaloptions.names_subsamples)
+        fprintf(fid, [' & ' str_tmp]);
+        counter = counter + 1;
+    end
+    fprintf(fid, '\\\\\n');
 
     counter = 1;
     str_tmp = results_eval.priors(1).R(1).horizon(evaloptions.Nhs(counter)).name;
