@@ -59,7 +59,7 @@ for i1 = 1:length(samples)
                     end
                     
                     % call f_eval_latex_table
-                    if strcmp(switch_eval_latex_table, 'on')
+                    if strcmp(switch_eval_latextables, 'on')
                         f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_country)
                     end
                 end
