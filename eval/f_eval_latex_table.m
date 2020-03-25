@@ -38,10 +38,16 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     str_caption = [name_country ' (' flag_truegdp ', ' flag_survey ', ' flag_sample ', P = ' num2str(Np) ')']; 
 
     % notes to table
-    str_notes = ['RMSFE, logS and CRPS for the models are relativ to the B-AR benchmark (see text for details).' ...
+    if strcmp(flag_country, 'GER')
+    str_notes = ['RMSFE is the root mean squared forecast error, logS and CRPS are the average . All model metrics are relativ to the B-AR benchmark (see text for details).' ...
                  'The log score is negatively orientated so that a value in the table below 1 corresponds to a better performance than the benchmark.' ...
-                 'Forecast horizon h is in months. The full sample period is 2000Q1-2018Q4, the post-crisis sample starts in 2010Q1 and ends in 2018Q4.'];
-
+                 'Forecast horizon h is in months. The full sample period is 2006Q1-2018Q4, the post-crisis sample starts in 2010Q1 and ends in 2018Q4.'];
+    elseif strcmp(flag_country, 'US')
+    str_notes = ['RMSFE is the root mean squared forecast error, logS and CRPS are the average . All model metrics are relativ to the B-AR benchmark (see text for details).' ...
+                 'The log score is negatively orientated so that a value in the table below 1 corresponds to a better performance than the benchmark.' ...
+                 'Forecast horizon h is in months. The full sample period is 2000Q1-2018Q4, the post-crisis sample starts in 2010Q1 and ends in 2018Q4.'];    
+    end
+    
     % - open file ------------------------------------------------------- %
     % ------------------------------------------------------------------- %
     filename = ['table_' flag_country '_' flag_truegdp '_' flag_survey '_' flag_sample '_Np' num2str(Np) '.tex'];
