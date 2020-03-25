@@ -206,7 +206,10 @@ function logscore = f_computelogscore(draws,truegdp,flag_computelogscore)
 if strcmp( flag_computelogscore , 'kde')    
     
     % kernel density estimate following Chovez (2010) ????
-    [~,dens,xs,~]=kde(draws) ; 
+    range_kde = max(draws) - min(draws);
+    min_kde = min(min(draws), truegdp) - range_kde/10;
+    max_kde = max(max(draws), truegdp) + range_kde/10; 
+    [~,dens,xs,~]=kde(draws, 2^8, min_kde, max_kde) ; 
     index_truegdp = sum( xs <= truegdp ) ; 
     logscore = log( dens( index_truegdp ) ) ; 
     
