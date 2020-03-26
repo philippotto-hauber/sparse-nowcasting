@@ -74,25 +74,27 @@ function f_eval_plot_pointnowcasts(flag_survey, flag_sample, flag_truegdp, Np, f
                     end
                 else
                     titlename = [flag_country ', R=' num2str(r) ', ' results_eval.priors(1).R(1).horizon(h).name ' (in months)'] ;
+                    counter_p = 1;
                     for p = evaloptions.Npriorspecs
                         counter_q = 1 ; 
                         for q = indexstart : indexend
-                            dens_medians(p,counter_q) = median( results_eval.priors(p).R(r).horizon(h).dens{q} ) ;
-                            dens_upper(p,counter_q) = prctile( results_eval.priors(p).R(r).horizon(h).dens{q} , 75 ) ;
-                            dens_lower(p,counter_q) = prctile( results_eval.priors(p).R(r).horizon(h).dens{q} , 25 ) ;
+                            dens_medians(counter_p,counter_q) = median( results_eval.priors(p).R(r).horizon(h).dens{q} ) ;
+                            dens_upper(counter_p,counter_q) = prctile( results_eval.priors(p).R(r).horizon(h).dens{q} , 75 ) ;
+                            dens_lower(counter_p,counter_q) = prctile( results_eval.priors(p).R(r).horizon(h).dens{q} , 25 ) ;
                             counter_q = counter_q + 1 ; 
                         end
+                        counter_p = counter_p + 1;
                     end
                 end
 
                 % append B-AR benchmark
-                dens_medians(p+1,:) = median( results_eval.benchmark_BAR.horizon(h).dens( indexstart : indexend , : ) , 2 ) ;
-                dens_upper(p+1,:) = prctile( results_eval.benchmark_BAR.horizon(h).dens( indexstart : indexend , : ) , 75 , 2 ) ;
-                dens_lower(p+1,:) = prctile( results_eval.benchmark_BAR.horizon(h).dens( indexstart : indexend , : ) , 25 , 2 ) ;
+                dens_medians(counter_p + 1,:) = median( results_eval.benchmark_BAR.horizon(h).dens( indexstart : indexend , : ) , 2 ) ;
+                %dens_upper(p+1,:) = prctile( results_eval.benchmark_BAR.horizon(h).dens( indexstart : indexend , : ) , 75 , 2 ) ;
+                %dens_lower(p+1,:) = prctile( results_eval.benchmark_BAR.horizon(h).dens( indexstart : indexend , : ) , 25 , 2 ) ;
 
                 % - create plot
                 % ----------------- 
-                f_plot_nowcast_realization( dens_medians , dens_lower , dens_upper , truegdp , flag_truegdp , titlename,ylabelname,xtickslabelname( indexstart : indexend ) )
+                f_plot_nowcast_realization( dens_medians , [] , [] , truegdp , flag_truegdp , titlename,ylabelname,xtickslabelname( indexstart : indexend ) )
 
                 % - save plot
                 % -----------------        
@@ -222,11 +224,11 @@ grid on
 %title(titlename,'Fontsize',10,'FontWeight','normal')
 lgd = legend([p1 p2 p3 p4 p5 p6 p7], ...
        [flag_truegdp ' release'],...
+       'Nd',...
        'NIG', ...
        'MG',...
        'PMNM',...
        'HS+',...
-       'Nd',...
        'B-AR(1)',...
        'Location','best') ;
 lgd.FontSize = 7;
