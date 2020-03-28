@@ -34,3 +34,4 @@ C:/Users/ * / Disseration/sparse nowcasting
       - /benchmark: B-AR(1) forecasts of GDP corresponding to the vintages in ../*/datasetsUS.mat 
       - /level rec/.. result files
     * /tables (linked): formatted evaluation tables that are linked to tables folders in /GER and /US
+    * /latex_tables: tables in /GER and /US but in .tex format
