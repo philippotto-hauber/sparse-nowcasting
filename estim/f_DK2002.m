@@ -45,10 +45,6 @@ for t=1:size(data,2)
     invF{t,1} = F\eye(size(F,1));
     K = T*P*(Wt*Z)'*invF{t,1};
     L(:,:,t) = T-K*Wt*Z; 
-    if t==size(data,2)
-        aTT = a + P*Z'*Wt'*invF{t,1}*v{t,1};
-        PTT = P - P*Z'*Wt'*invF{t,1}*Wt*Z*P';
-    end
     a = T*a + K*v{t,1};
     P = T*P*L(:,:,t)'+RQR;
 end
