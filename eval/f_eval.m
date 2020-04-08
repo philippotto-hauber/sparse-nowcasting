@@ -48,7 +48,7 @@ function f_eval(flag_survey, flag_sample, flag_truegdp, Np, flag_country)
             end
 
             results_eval.quarters{q} = truegdp_strct.quarters{q} ;
-
+            
             % - get vintage indices
             % ------------------------
             [index_vs, flag_models_vs, flag_BAR_vs] = f_mapping_q_to_v(q,evaloptions.Nhs,flag_country) ; 
@@ -60,7 +60,7 @@ function f_eval(flag_survey, flag_sample, flag_truegdp, Np, flag_country)
             for h = 1:length(index_vs)
                 dens_pool = cell( 1 , length( evaloptions.Nrs ) ) ; 
                 for index_r = 1 : length( evaloptions.Nrs ) + 1 % factors + equal weight pool
-
+                    
                     % - create subfields
                     % ------------------------
                     if index_r == length( evaloptions.Nrs ) + 1 
@@ -196,7 +196,9 @@ end
 function [sfe, logscore, crps] = f_compute_sfe_logscore_crps(draws,truegdp,flag_computelogscore)
 
 sfe = mean((draws - truegdp).^2) ; % forecast error
-logscore = f_computelogscore(draws,truegdp,flag_computelogscore) ; 
+
+logscore = f_computelogscore(draws,truegdp,flag_computelogscore) ;
+
 crps = f_computeCRPS(draws',truegdp) ; % crps
 
 end
