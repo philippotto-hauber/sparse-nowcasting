@@ -1,9 +1,18 @@
 clear;clc;
 
-foldername = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\estim\PH_GER' ; 
-fileprefix = '\PH_GER' ; 
+country = 'Germany';
+
+if strcmp(country, 'Germany')
+    foldername = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\estim\PH_GER'; 
+    fileprefix = '\PH_GER';
+    Nvintages = 157;
+elseif strcmp(country, 'United States')
+    foldername = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\estim\PH_US';
+    fileprefix = '\PH_US' ; 
+    Nvintages = 229 ; 
+end
+
 counter = 0 ;
-Nvintages = 157 ; % Germany
 priorspec =  1:5 ; % Normal prior, PMNM prior 
 rec_rolling = {'rec', 'rolling'} ;
 surveys = {'level', 'diff'} ;
