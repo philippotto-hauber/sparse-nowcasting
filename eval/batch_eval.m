@@ -3,11 +3,11 @@ clear; close all; clc;
 % ----------------------------
 % - spec details -------------
 % ----------------------------
-Nps = [1] ; 
-countries = {'GER', 'US'} ; 
-samples = {'rec'} ; 
-surveys = {'level'} ; 
-truegdps = {'first'} ; 
+Nps = [1 3] ; 
+countries = {'US'} ; 
+samples = {'rec', 'rolling'} ; 
+surveys = {'level', 'diff'} ; 
+truegdps = {'first', 'second'} ; 
 
 
 % ----------------------------
