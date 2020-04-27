@@ -139,7 +139,7 @@ for p = evaloptions.Npriorspecs
                 if index_r <= length( evaloptions.Nrs )
                     % - load results mat-file
                     % -------------------------
-                    load([dir_models '\PH_' flag_country '_v' num2str(index_vs(h)) '_prior' num2str(p) '_Nr' num2str(r) '_Np' num2str(Np) '_' flag_sample '_' flag_survey '.mat'])
+                    load([dir_models 'PH_' flag_country '_v' num2str(index_vs(h)) '_prior' num2str(p) '_Nr' num2str(r) '_Np' num2str(Np) '_' flag_sample '_' flag_survey '.mat'])
 
                     % - select correct row and multiply with multiplication factor
                     % -------------------------
