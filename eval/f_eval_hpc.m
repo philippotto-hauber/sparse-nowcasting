@@ -1,17 +1,23 @@
 function f_eval_hpc(Nspec, country)
 
 % back out flag_sample, survey and truegdp from Nspec
-tmp_survey = {'rec', 'rolling'};
-tmp_sample = {'level', 'diff'};
-tmp_truegdp = {'first', 'second'};
-tmp_Np = [1, 3]; 
+Nsurveys = {'level', 'diff'};
+Nsamples = {'rec', 'rolling'};
+Ntruegdps = {'first', 'second'};
+Nps = [1, 3];
 
-if Nspec > 0
-    flag_survey = 'rec'; 
-    flag_sample = 'level'; 
-    flag_truegdp = 'first'; 
-    Np = 1; 
-end
+tmp = repmat(Nsurveys, length(Nsamples) * length(Ntruegdps) * length(Nps), 1); tmp_survey = tmp(:);
+tmp = repmat(Nsamples, length(Ntruegdps) * length(Nps), length(Nsurveys)); tmp_sample = tmp(:);
+tmp = repmat(Ntruegdps, length(Nps), length(Nsurveys) * length(Nsamples)); tmp_truegdp = tmp(:);
+tmp = repmat(Nps, 1, length(Nps) *length(Nsurveys) * length(Nsamples)); tmp_Np = tmp(:); 
+
+% back out flags
+flag_survey = tmp_survey{Nspec}; 
+flag_sample = tmp_sample{Nspec};
+flag_truegdp = tmp_truegdp{Nspec}; 
+Np = tmp_Np(Nspec); 
+
+
 
 % flag_country
 if country == 0
@@ -161,7 +167,7 @@ end
     
     % - save results to mat-file
     % ----------------------------- 
-    save([dir_out 'results_eval_' flag_sample '_' flag_survey '_Np' num2str(Np) '_' flag_truegdp '.mat'],'results_eval')
+    save([dir_out 'results_eval_' flag_country '_' flag_sample '_' flag_survey '_Np' num2str(Np) '_' flag_truegdp '.mat'],'results_eval')
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
