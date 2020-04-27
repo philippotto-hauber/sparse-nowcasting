@@ -7,7 +7,7 @@ end
 
 % back out flag_sample, survey and truegdp from Nspec
 Nsurveys = {'level', 'diff'};
-Nsamples = {'rec', 'rolling'};
+Nsamples = {'rec', 'roll'};
 Ntruegdps = {'first', 'second'};
 Nps = [1, 3];
 
@@ -38,6 +38,7 @@ evaloptions = load_evaloptions(flag_country) ;
 
 % - directories ---
 % ----------------------------
+disp(pwd)
 dir_truegdp = '' ;
 dir_models = ['../PH ' flag_country '/matfiles/'] ; 
 dir_benchmark = ['benchmark_' flag_country '/'] ; 
