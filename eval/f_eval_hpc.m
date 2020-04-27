@@ -33,10 +33,10 @@ evaloptions = load_evaloptions(flag_country) ;
 
 % - directories ---
 % ----------------------------
-dir_truegdp = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\out\' ;
-dir_models = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\estim\PH_' flag_country] ; 
-dir_benchmark = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\' flag_country '\benchmark\'] ; 
-dir_out = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\' flag_country '\' flag_survey ' ' flag_sample '\Np = ' num2str(Np) '\' flag_truegdp '\'] ; 
+dir_truegdp = '' ;
+dir_models = ['../PH ' flag_country '/matfiles/'] ; 
+dir_benchmark = ['benchmark_ ' flag_country '/'] ; 
+dir_out = ['results_eval mat files/'] ; 
 if exist(dir_out, 'dir') ~= 7;mkdir(dir_out); end  
 
 % - load true gdp mat-file ---
