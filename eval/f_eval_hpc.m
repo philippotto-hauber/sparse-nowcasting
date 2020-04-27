@@ -2,6 +2,7 @@ function f_eval_hpc(Nspec, country)
 if (isdeployed)
     maxNumCompThreads(1);
     Nspec = str2double(Nspec) ;
+    country = str2double(country);
 end
 
 % back out flag_sample, survey and truegdp from Nspec
