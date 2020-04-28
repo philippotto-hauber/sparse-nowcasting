@@ -7,7 +7,7 @@ end
 
 % back out flag_sample, survey and truegdp from Nspec
 Nsurveys = {'level', 'diff'};
-Nsamples = {'rec', 'roll'};
+Nsamples = {'rec', 'rolling'};
 Ntruegdps = {'first', 'second'};
 Nps = [1, 3];
 
@@ -113,9 +113,14 @@ for p = evaloptions.Npriorspecs
 
                     % - load results mat-file
                     % -------------------------
-                    load([dir_benchmark 'PH_' flag_country '_v' num2str(index_vs(h)) '_' flag_sample '.mat'])
+		    if strcmp(flag_sample, 'rolling')
+                    	load([dir_benchmark 'PH_' flag_country '_v' num2str(index_vs(h)) '_roll.mat'])
+		    elseif strcmp(flag_sample, 'rec')
+                    	load([dir_benchmark 'PH_' flag_country '_v' num2str(index_vs(h)) '_' flag_sample '.mat'])
+		    end
 
                     % - select correct row and multiply with 100
+
                     % -------------------------
                     if flag_BAR_vs(h) == 1 % forecast
                         draws_temp = evaloptions.multfac * draws.forecast( evaloptions.Nthin : evaloptions.Nthin : end ) ;
