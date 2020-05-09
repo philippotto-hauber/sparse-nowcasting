@@ -41,25 +41,46 @@ surveys = {'level', 'diff'} ;
 truegdps = {'first', 'second'} ; 
 
 % ----------------------------
+% - switches -----------------
+% ----------------------------
+switch_eval_matfiles = 'on' ; 
+switch_eval_tables = 'on' ; 
+switch_eval_pointnowcasts = 'on' ; 
+switch_eval_cumsum = 'on' ; 
+switch_eval_densities = 'on' ; 
+switch_eval_latextables = 'on'; 
+
+% ----------------------------
 % - call functions -----------
 % ----------------------------
                     
 % call f_eval
+if strcmp(switch_eval_matfiles, 'on') 
 f_eval_hpc(flag_survey, flag_sample, flag_truegdp, Np, flag_country) ;
+end
 
 % call f_eval_tables
+if strcmp(switch_eval_tables, 'on') 
 f_eval_tables(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
+end 
 
 % call f_eval_plot_pointnowcasts
+if strcmp(switch_eval_pointnowcasts, 'on') 
 f_eval_plot_pointnowcasts(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
+end
 
 % call f_eval_plot_cumsum
+if strcmp(switch_eval_cumsum, 'on') 
 f_eval_plot_cumsum(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
+end
 
-% call f_eval_plot_cumsum
+% call f_eval_plot_densities
+if strcmp(switch_eval_densities, 'on') 
 %f_eval_plot_densities(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
+end
 
 % call f_eval_latex_table
+if strcmp(switch_eval_latextables, 'on') 
 f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_country)
-
+end
 end
