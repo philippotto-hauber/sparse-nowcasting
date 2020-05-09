@@ -12,19 +12,18 @@ Ndraws <- 1000
 Nthin <- 1 # thin argument in mcmc does NOT have an affect on the results from effectivesize!
 
 # spec details 
-Nrs <- c(1:10)
+Nrs <- seq(1, 3)
 Npriors <- c(5, 1, 2, 3, 4)
-Nsurveys <- c("level")
-Nsamples <- c("rec")
+Nsurveys <- c("level", "diff")
+Nsamples <- c("rec", "rolling")
 Ncountries <- c("GER", "US")
-Nps <- 1 
+Nps <- c(1, 3) 
 
 # prior names
 priors <- c("NIG", "MG", "PMNM", "HS+", "Nd")
 
 # initialize dataframe
-effsampsize <- data.frame(surveys = vector(), 
-                          sample = vector(),
+ineff_facs <- data.frame(surveysample = vector(), 
                           Np = vector(),
                           prior = vector(),
                           country = vector(),
@@ -82,10 +81,9 @@ for (country in Ncountries){
               ineff <- Ndraws / effectiveSize( as.mcmc( draws_mat , thin = Nthin ) ) 
               
               # append to df
-              effsampsize <- rbind(effsampsize, 
-                                   data.frame(surveys = rep(survey, ncol(draws_mat)),
-                                              sample = rep(sample, ncol(draws_mat)),
-                                              Np = rep(Np, ncol(draws_mat)),
+              ineff_facs <- rbind(ineff_facs, 
+                                  data.frame(surveysample = rep(paste(survey, sample), ncol(draws_mat)),
+                                              Np = rep(paste("Np=", Np), ncol(draws_mat)),
                                               prior = rep(priors[prior], ncol(draws_mat)),
                                               country = rep(country, ncol(draws_mat)),
                                               vintage = rep(Nvintage, ncol(draws_mat)),
@@ -102,8 +100,18 @@ for (country in Ncountries){
 
 # plots
 library(forcats)
-ggplot(effsampsize) + 
+ggplot(ineff_facs) + 
   geom_boxplot(aes(x=fct_rev(prior),y=value))+
   facet_wrap( ~ country, scales = "free_y")+
   labs(x = "", y = "inefficiency factor")+
   coord_flip()
+
+# alternative plots
+library(forcats)
+ggplot(ineff_facs) + 
+  geom_boxplot(aes(x=prior,y=value, color = country), outlier.size=1)+
+  labs(x = "", y = "inefficiency factor")+
+  facet_wrap(surveysample ~ Np, nrow = length(Nsurveys) * length(Nsamples), scales = "free_y")
+
+
+  
