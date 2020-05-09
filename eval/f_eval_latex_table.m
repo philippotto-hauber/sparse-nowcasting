@@ -13,7 +13,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     % - USER INPUT ------------------------------------------------------ %
     % ------------------------------------------------------------------- %
     fontsize = 'tiny'; % 
-    linestep = '0.1'; % step size between model blocks
+    linestep = '0.0'; % step size between model blocks
 
     evaloptions.Nhs = [2, 4] ; % forecast horizons
 
@@ -115,7 +115,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     
     vals_bar = getvals(results_eval, [], [], 0, 1, evaloptions);
     addline(fid, vals_bar, 'B-AR', [])
-    fprintf(fid, ['\\hspace{' linestep 'cm}\\\\\n']);
+    fprintf(fid, ['\\vspace{' linestep 'cm}\\\\\n']);
 
     % - models for different R ------------------------------------------ %
     % ------------------------------------------------------------------- %
@@ -129,7 +129,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
                 addline(fid, vals ./ vals_bar, '', evaloptions.names_priors{p})
             end
         end
-        fprintf(fid, ['\\hspace{' linestep 'cm}\\\\\n']);
+        fprintf(fid, ['\vspace{' linestep 'cm}\\\\\n']);
     end
 
     % - pool (only loop over priors!) ----------------------------------- %
