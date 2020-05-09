@@ -123,7 +123,7 @@ for i = 1 : length(evaloptions.indexstarts)
     % - save big table to xls
     % ------------------------------
     datatable = [rmsfe_all logscore_all crps_all] ; 
-    writematrix([dir_save 'datatable_allR_plus_pool_' results_eval.quarters{indexstart} '_' results_eval.quarters{indexend} '.xlsx'],datatable)    
+    csvwrite([dir_save 'datatable_allR_plus_pool_' results_eval.quarters{indexstart} '_' results_eval.quarters{indexend} '.xlsx'],datatable)    
     
     % - save append current subsample to big big table
     % ----------------------------------------------------
@@ -132,4 +132,4 @@ end
 
 % - save big big table to xls
 % ------------------------------
-writematrix([dir_save 'datatable_all_R_plus_pool_all_samples.xlsx'],datatable_all)
+csvwrite([dir_save 'datatable_all_R_plus_pool_all_samples.xlsx'],datatable_all)
