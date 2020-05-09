@@ -39,9 +39,9 @@ HPC file management
  * /benchmark GER: benchmark B-AR models that were formerly in the respective country folder
  * /benchmark US: benchmark B-AR models that were formerly in the respective country folder
  * trueGDPUS.mat, truegdpGER.mat: GDP growth realizations (copied from data folder)
- * /GER (copied from HPC folder)
+ * /GER 
        - /level rec/.. result files
- * /US (copied from HPC folder)
+ * /US 
        - /level rec/.. result files
       
  
