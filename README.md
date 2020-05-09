@@ -27,11 +27,22 @@ C:/Users/ * / Disseration/sparse nowcasting
   * /estim
     * /PH_GER: mat-files of model outputs  
   * /eval
-    * /GER
-      - /benchmark: B-AR(1) forecasts of GDP corresponding to the vintages in ../*/datasetsGER.mat
-      - /level rec/.. result files
-    * /US
-      - /benchmark: B-AR(1) forecasts of GDP corresponding to the vintages in ../*/datasetsUS.mat 
-      - /level rec/.. result files
+    * /GER (copied from HPC folder)
+       - /level rec/.. result files
+    * /US (copied from HPC folder)
+       - /level rec/.. result files
     * /tables (linked): formatted evaluation tables that are linked to tables folders in /GER and /US
     * /latex_tables: tables in /GER and /US but in .tex format
+    
+HPC file management
+/sfs/fs2/work-sh1/swwiw663/eval-hpc
+ * /benchmark GER: benchmark B-AR models that were formerly in the respective country folder
+ * /benchmark US: benchmark B-AR models that were formerly in the respective country folder
+ * trueGDPUS.mat, truegdpGER.mat: GDP growth realizations (copied from data folder)
+ * /GER 
+       - /level rec/.. result files
+ * /US 
+       - /level rec/.. result files
+      
+ 
+
