@@ -11,7 +11,7 @@ if exist(dir_save, 'dir') ~= 7;mkdir(dir_save); end
 
 % - load forecast structure
 % -----------------
-load(['results_eval mat files/results_eval.mat'])
+load(['results_eval mat files/results_eval_' flag_country '_' flag_sample '_' flag_survey '_Np' num2str(Np) '_' flag_truegdp '.mat'])
 
 % - loop over subsamples
 % -----------------
