@@ -54,7 +54,7 @@ f_eval_tables(flag_survey, flag_sample, flag_truegdp, Np, flag_country)
 f_eval_plot_pointnowcasts(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
 
 % call f_eval_plot_cumsum
-%f_eval_plot_cumsum(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
+f_eval_plot_cumsum(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
 
 % call f_eval_plot_cumsum
 %f_eval_plot_densities(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
