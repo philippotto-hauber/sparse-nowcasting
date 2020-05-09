@@ -6,13 +6,12 @@ evaloptions = load_evaloptions(flag_country) ;
 
 % - directories ---
 % ----------------------------
-dir_load = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\' flag_country '\' flag_survey ' ' flag_sample '\Np = ' num2str(Np) '\' flag_truegdp '\'] ;
-dir_save = [dir_load 'tables\'] ; 
+dir_save = [pwd '/' flag_country '/' flag_survey ' ' flag_sample '/Np = ' num2str(Np) '/' flag_truegdp '/tables/'] ; 
 if exist(dir_save, 'dir') ~= 7;mkdir(dir_save); end  
 
 % - load forecast structure
 % -----------------
-load([dir_load 'results_eval.mat'])
+load(['results_eval mat files/results_eval.mat'])
 
 % - loop over subsamples
 % -----------------
