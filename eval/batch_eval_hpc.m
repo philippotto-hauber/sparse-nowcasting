@@ -60,6 +60,6 @@ f_eval_plot_cumsum(flag_survey, flag_sample, flag_truegdp, Np, flag_country)
 %f_eval_plot_densities(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
 
 % call f_eval_latex_table
-%f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_country)
+f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_country)
 
 end
