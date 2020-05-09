@@ -2,7 +2,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
 
     % - dir in & out ---------------------------------------------------- %
     % ------------------------------------------------------------------- %
-    dir_save = 'latex_tables\' ; 
+    dir_save = 'latex_tables/' ; 
     if exist(dir_save, 'dir') ~= 7;mkdir(dir_save); end  
 
     % - load eval structure and options --------------------------------- %
