@@ -76,7 +76,7 @@ end
 
 % call f_eval_plot_densities
 if strcmp(switch_eval_densities, 'on') 
-%f_eval_plot_densities(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
+f_eval_plot_densities(flag_survey, flag_sample, flag_truegdp, Np, flag_country) 
 end
 
 % call f_eval_latex_table
