@@ -82,8 +82,8 @@ for (country in Ncountries){
               
               # append to df
               ineff_facs <- rbind(ineff_facs, 
-                                  data.frame(surveysample = rep(paste(survey, sample), ncol(draws_mat)),
-                                              Np = rep(paste("Np=", Np), ncol(draws_mat)),
+                                  data.frame(surveysample = rep(paste0(survey, ", ", sample), ncol(draws_mat)),
+                                              Np = rep(paste("P =", Np), ncol(draws_mat)),
                                               prior = rep(priors[prior], ncol(draws_mat)),
                                               country = rep(country, ncol(draws_mat)),
                                               vintage = rep(Nvintage, ncol(draws_mat)),
@@ -107,11 +107,13 @@ ggplot(ineff_facs) +
   coord_flip()
 
 # alternative plots
-library(forcats)
 ggplot(ineff_facs) + 
   geom_boxplot(aes(x=prior,y=value, color = country), outlier.size=1)+
-  labs(x = "", y = "inefficiency factor")+
-  facet_wrap(surveysample ~ Np, nrow = length(Nsurveys) * length(Nsamples), scales = "free_y")
-
+  labs(x = "", y = "", caption = "Blablabla")+
+  facet_grid(Np ~ surveysample, scales = "free_y")+
+  theme_minimal()+
+  theme(strip.text.x = element_text(size = 8),
+        strip.text.y = element_text(size = 8),
+        legend.title = element_blank())
 
   
