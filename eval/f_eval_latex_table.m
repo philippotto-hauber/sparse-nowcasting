@@ -130,7 +130,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
                 addline(fid, vals ./ vals_bar, '', evaloptions.names_priors{p})
             end
         end
-        fprintf(fid, ['\vspace{' linestep 'cm}\\\\\n']);
+        fprintf(fid, ['\\vspace{' linestep 'cm}\\\\\n']);
     end
 
     % - pool (only loop over priors!) ----------------------------------- %
