@@ -116,4 +116,6 @@ ggplot(ineff_facs) +
         strip.text.y = element_text(size = 8),
         legend.title = element_blank())
 
-  
+# save file as full size pdf
+#ggsave(file="a4_output.pdf", width = 0.5*210, height = 0.5*297, units = "mm")
+ggsave(file="plot_ineff_facs.pdf", width = 150, height = 150, units = "mm")
