@@ -1,4 +1,4 @@
-rm(list = ls(all = TRUE))
+rm(list = ls())
 ###################################################
 
 # libraries
@@ -16,6 +16,7 @@ Nrs <- seq(1, 3)
 Npriors <- c(5, 1, 2, 3, 4)
 Nsurveys <- c("level", "diff")
 Nsamples <- c("rec", "rolling")
+Nmod <- seq(1, length(Nsurveys) + length(Nsamples))
 Ncountries <- c("GER", "US")
 Nps <- c(1, 3) 
 
@@ -32,71 +33,96 @@ ineff_facs <- data.frame(surveysample = vector(),
                           )
 
 # loop over files
-for (country in Ncountries){
+for (country in Ncountries)
+{
+  
+  # number of vintages and path to matfiles depends on country
   if (country == "GER")
   {
-    Nvintages <- 157
+    Nvintages <- seq(1, 157)
     dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/PH_GER/"
   } 
   else if (country == "US")
   {
-    Nvintages <- 229 
+    Nvintages <- seq(1, 229) 
     dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/PH_US/"
   }
-  for (survey in Nsurveys){
-    for (sample in Nsamples){
-      for (Np in Nps){
-        for (r in 1 : length(Nrs)) {
-          Nr <- Nrs[ r ] 
-          for (prior in Npriors){
-            for (Nvintage in 1 : Nvintages){
-              # paste together filename
-              filename <- paste0("PH_", country, 
-                                 "_v", Nvintage,
-                                 "_prior", prior ,
-                                 "_Nr", Nr,
-                                 "_Np", Np,
-                                 '_', sample, "_", survey,
-                                 ".mat")
-            
-              # read in mat file
-              x <- read.mat(paste0(dirname, filename))
-              
-              # extract draws of nowcast
-              temp <- cbind(x$draws$nowcast[[1]])
-              
-              # check if forecasts exist
-              if ("forecast_mean" %in% names(x$draws))
-                temp <- cbind( temp, x$draws$forecast[[1]])
-
-              # multiply US draws with 100
-              if (country == "US")
-                temp <- temp * 100 
-              
-              # convert to matrix & remove temp
-              draws_mat <- as.matrix(temp)
-              rm(temp)
-              
-              # compute inefficiency factors
-              ineff <- Ndraws / effectiveSize( as.mcmc( draws_mat , thin = Nthin ) ) 
-              
-              # append to df
-              ineff_facs <- rbind(ineff_facs, 
-                                  data.frame(surveysample = rep(paste0(survey, ", ", sample), ncol(draws_mat)),
-                                              Np = rep(paste("P =", Np), ncol(draws_mat)),
-                                              prior = rep(priors[prior], ncol(draws_mat)),
-                                              country = rep(country, ncol(draws_mat)),
-                                              vintage = rep(Nvintage, ncol(draws_mat)),
-                                              value = ineff
-                                              )
-                                  )
-            }
-          }
-        }
+  
+  # merge spec details into one big loop
+  Nrs_loop = rep(Nrs, length(Npriors) * length(Nvintages) * length(Nps) * length(Nmod))
+  Npriors_loop = rep(Npriors %x% rep(1, length(Nrs)), length(Nvintages) * length(Nps) * length(Nmod))
+  Nvintages_loop = rep(Nvintages %x% rep(1, length(Nrs) * length(Npriors)), length(Nps) * length(Nmod))
+  Nps_loop = rep(Nps %x% rep(1, length(Nrs) * length(Npriors) * length(Nvintages)),length(Nmod))
+  Nmod_loop = Nmod %x% rep(1, length(Nrs) * length(Npriors) * length(Nvintages) * length(Nps))
+  
+  for (ind in seq(1, length(Nrs_loop)))
+  {
+    
+      # back out survey and sample from Nmod_loop!
+      if (Nmod_loop[ind] == 1)
+      {
+        sample <- Nsamples[1]
+        survey <- Nsurveys[1]
       }
-    }    
-  }      
-}    
+      else if (Nmod_loop[ind] == 2)
+      {
+        sample <- Nsamples[1]
+        survey <- Nsurveys[2]
+      }
+      else if (Nmod_loop[ind] == 3)
+      {
+        sample <- Nsamples[2]
+        survey <- Nsurveys[1]
+      }
+      else
+      {
+        sample <- Nsamples[2]
+        survey <- Nsurveys[2]
+      }
+        
+
+      # paste together filename
+      filename <- paste0("PH_", country, 
+                         "_v", Nvintages_loop[ind],
+                         "_prior", Npriors_loop[ind] ,
+                         "_Nr", Nrs_loop[ind],
+                         "_Np", Nps_loop[ind],
+                         '_', sample, "_", survey,
+                         ".mat")
+    
+      # read in mat file
+      x <- read.mat(paste0(dirname, filename))
+      
+      # extract draws of nowcast
+      temp <- cbind(x$draws$nowcast[[1]])
+      
+      # check if forecasts exist
+      if ("forecast_mean" %in% names(x$draws))
+        temp <- cbind( temp, x$draws$forecast[[1]])
+
+      # multiply US draws with 100
+      if (country == "US")
+        temp <- temp * 100 
+      
+      # convert to matrix & remove temp
+      draws_mat <- as.matrix(temp)
+      rm(temp)
+      
+      # compute inefficiency factors
+      ineff <- Ndraws / effectiveSize( as.mcmc( draws_mat , thin = Nthin ) ) 
+      
+      # append to df
+      ineff_facs <- rbind(ineff_facs, 
+                          data.frame(surveysample = rep(paste0(survey, ", ", sample), ncol(draws_mat)),
+                                      Np = rep(paste("P =", Nps_loop[ind]), ncol(draws_mat)),
+                                      prior = rep(priors[Npriors_loop[ind]], ncol(draws_mat)),
+                                      country = rep(country, ncol(draws_mat)),
+                                      vintage = rep(Nvintages_loop[ind], ncol(draws_mat)),
+                                      value = ineff
+                                      )
+                          )
+  }
+}
 
 # plots
 library(forcats)
@@ -110,7 +136,7 @@ ggplot(ineff_facs) +
 ggplot(ineff_facs) + 
   geom_boxplot(aes(x=prior,y=value, color = country), outlier.size=1)+
   labs(x = "", y = "", caption = "Blablabla")+
-  facet_grid(Np ~ surveysample, scales = "free_y")+
+  facet_grid(surveysample ~ Np, scales = "free_y")+
   theme_minimal()+
   theme(strip.text.x = element_text(size = 8),
         strip.text.y = element_text(size = 8),
