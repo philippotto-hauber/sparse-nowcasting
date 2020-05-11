@@ -17,7 +17,7 @@ Ndraws <- 1000
 Nthin <- 1 # thin argument in mcmc does NOT have an affect on the results from effectivesize!
 
 # spec details 
-Nrs <- seq(1, 3)
+Nrs <- seq(1, 10)
 Npriors <- c(5, 1, 2, 3, 4)
 Nsurveys <- c("level", "diff")
 Nsamples <- c("rec", "rolling")
