@@ -10,7 +10,6 @@ library(doParallel)
 
 # parallel
 registerDoParallel(cores=4)
-getDoParWorkers()
 
 # number of draws
 Ndraws <- 1000
@@ -39,6 +38,7 @@ ineff_facs <- data.frame(surveysample = vector(),
                           )
 
 # loop over files
+start_time <- Sys.time()
 for (country in Ncountries)
 {
   
@@ -131,6 +131,8 @@ for (country in Ncountries)
   # merge df into master df
   ineff_facs <- rbind(ineff_facs, tmp_df)
 }
+end_time <- Sys.time()
+print(end_time - start_time)
 
 # save to file
 save(ineff_facs, file = "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/ineff_facs.Rda")
