@@ -9,7 +9,7 @@ library(dplyr)
 library(parallel)
 
 # parallel
-registerDoParallel(cores=4)
+registerDoParallel(cores=20)
 getDoParWorkers()
 
 # number of draws
@@ -46,13 +46,13 @@ for (country in Ncountries)
   {
     Nvintages <- seq(1, 157)
     Nvintages <- seq(1, 10)
-    dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/PH_GER/"
+    dirname <- "../PH_GER/"
   } 
   else if (country == "US")
   {
     Nvintages <- seq(1, 229) 
     Nvintages <- seq(1, 10)
-    dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/PH_US/"
+    dirname <- "../PH_US/"
   }
   
   # merge spec details into one big loop
