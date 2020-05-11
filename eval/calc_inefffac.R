@@ -32,6 +32,7 @@ priors <- c("NIG", "MG", "PMNM", "HS+", "Nd")
 ineff_facs <- data.frame(surveysample = vector(), 
                           Np = vector(),
                           prior = vector(),
+                          Nr = vector(),
                           country = vector(),
                           vintage = vector(),
                           value = vector()
@@ -119,6 +120,7 @@ for (country in Ncountries)
       # append to df
       df_out <-   data.frame(surveysample = rep(paste0(survey, ", ", sample), ncol(draws_mat)),
                               Np = rep(paste("P =", Nps_loop[ind]), ncol(draws_mat)),
+                              Nr = rep(Nrs_loop[ind], ncol(draws_mat)),
                               prior = rep(priors[Npriors_loop[ind]], ncol(draws_mat)),
                               country = rep(country, ncol(draws_mat)),
                               vintage = rep(Nvintages_loop[ind], ncol(draws_mat)),
