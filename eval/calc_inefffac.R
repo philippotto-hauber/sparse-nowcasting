@@ -6,6 +6,11 @@ library(coda)
 library(rmatio)
 library(ggplot2)
 library(dplyr)
+library(parallel)
+
+# parallel
+registerDoParallel(cores=4)
+getDoParWorkers()
 
 # number of draws
 Ndraws <- 1000
@@ -40,11 +45,13 @@ for (country in Ncountries)
   if (country == "GER")
   {
     Nvintages <- seq(1, 157)
+    Nvintages <- seq(1, 10)
     dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/PH_GER/"
   } 
   else if (country == "US")
   {
     Nvintages <- seq(1, 229) 
+    Nvintages <- seq(1, 10)
     dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/PH_US/"
   }
   
@@ -55,9 +62,8 @@ for (country in Ncountries)
   Nps_loop = rep(Nps %x% rep(1, length(Nrs) * length(Npriors) * length(Nvintages)),length(Nmod))
   Nmod_loop = Nmod %x% rep(1, length(Nrs) * length(Npriors) * length(Nvintages) * length(Nps))
   
-  for (ind in seq(1, length(Nrs_loop)))
+  tmp_df <- foreach (ind = seq(1, length(Nrs_loop)), .combine = rbind)%dopar%
   {
-    
       # back out survey and sample from Nmod_loop!
       if (Nmod_loop[ind] == 1)
       {
@@ -79,7 +85,6 @@ for (country in Ncountries)
         sample <- Nsamples[2]
         survey <- Nsurveys[2]
       }
-        
 
       # paste together filename
       filename <- paste0("PH_", country, 
@@ -91,7 +96,7 @@ for (country in Ncountries)
                          ".mat")
     
       # read in mat file
-      x <- read.mat(paste0(dirname, filename))
+      x <- rmatio::read.mat(paste0(dirname, filename))
       
       # extract draws of nowcast
       temp <- cbind(x$draws$nowcast[[1]])
@@ -109,19 +114,20 @@ for (country in Ncountries)
       rm(temp)
       
       # compute inefficiency factors
-      ineff <- Ndraws / effectiveSize( as.mcmc( draws_mat , thin = Nthin ) ) 
+      ineff <- Ndraws / coda::effectiveSize(coda::as.mcmc(draws_mat, thin = Nthin)) 
       
       # append to df
-      ineff_facs <- rbind(ineff_facs, 
-                          data.frame(surveysample = rep(paste0(survey, ", ", sample), ncol(draws_mat)),
-                                      Np = rep(paste("P =", Nps_loop[ind]), ncol(draws_mat)),
-                                      prior = rep(priors[Npriors_loop[ind]], ncol(draws_mat)),
-                                      country = rep(country, ncol(draws_mat)),
-                                      vintage = rep(Nvintages_loop[ind], ncol(draws_mat)),
-                                      value = ineff
-                                      )
-                          )
+      df_out <-   data.frame(surveysample = rep(paste0(survey, ", ", sample), ncol(draws_mat)),
+                              Np = rep(paste("P =", Nps_loop[ind]), ncol(draws_mat)),
+                              prior = rep(priors[Npriors_loop[ind]], ncol(draws_mat)),
+                              country = rep(country, ncol(draws_mat)),
+                              vintage = rep(Nvintages_loop[ind], ncol(draws_mat)),
+                              value = ineff
+                              )
   }
+  
+  # merge df into master df
+  ineff_facs <- rbind(ineff_facs, tmp_df)
 }
 
 # plots
