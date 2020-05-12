@@ -34,7 +34,9 @@ ineff_facs <- data.frame(surveysample = vector(),
                           Nr = vector(),
                           country = vector(),
                           vintage = vector(),
-                          value = vector()
+                          value = vector(),
+                          count_flagged_draws = vector(),
+                          filename = vector()
                           )
 
 # loop over files
@@ -124,7 +126,10 @@ for (country in Ncountries)
                               prior = rep(priors[Npriors_loop[ind]], ncol(draws_mat)),
                               country = rep(country, ncol(draws_mat)),
                               vintage = rep(Nvintages_loop[ind], ncol(draws_mat)),
-                              value = ineff
+                              value = ineff,
+                              count_flagged_draws = sum(unlist(x$draws$flag_phi_prevx)),
+                              filename = filename,
+                              stringsAsFactors = FALSE
                               )
   }
   
@@ -133,6 +138,12 @@ for (country in Ncountries)
 }
 end_time <- Sys.time()
 print(end_time - start_time)
+
+# convert Np, prior, country and surveysample to factors
+ineff_facs$surveysample <- as.factor(ineff_facs$surveysample)
+ineff_facs$Np <- as.factor(ineff_facs$Np)
+ineff_facs$country <- as.factor(ineff_facs$country)
+ineff_facs$prior <- as.factor(ineff_facs$prior)
 
 # save to file
 save(ineff_facs, file = "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/ineff_facs.Rda")
