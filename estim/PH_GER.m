@@ -49,11 +49,11 @@ elseif modspec == 2
 elseif modspec == 3
     % surveys in levels, rolling estimation window
     flag_surveydiff = 'level' ;
-    flag_rolling = 'roll' ;
+    flag_rolling = 'rolling' ;
 elseif modspec == 4
     % surveys in 1st diffs, rolling estimation window
     flag_surveydiff = 'diff' ;
-    flag_rolling = 'roll' ;
+    flag_rolling = 'rolling' ;
 end
 
 % ----------------------------------------------------------------------- %
@@ -69,11 +69,14 @@ if strcmp(flag_surveydiff, 'diff')
           datasets.vintage(v).data_bubartd( 2 : end , : ) , ...
           datasets.vintage(v).data_financial( 2 : end , :) ]' ; 
     yQ = datasets.vintage(v).data_gdp( 2 : end , 1 )' ;
-else
+elseif strcmp(flag_surveydiff, 'level')
     X = [ datasets.vintage(v).data_ifo_level , ...
           datasets.vintage(v).data_bubartd , ...
           datasets.vintage(v).data_financial(:,:)]' ; 
     yQ = datasets.vintage(v).data_gdp' ;
+else 
+    disp('incorrectly specified flag_surveydiff. Abort!');
+    abort;
 end
 
 index_use = sum(isnan(X),2)<(0.5 * size(X,2) ) ; 
@@ -98,8 +101,12 @@ yQ = ( yQ - mean_gdp ) / std_gdp ;
 if strcmp(flag_rolling, 'rolling') 
     yQ = yQ(1,end-120:end) ;
     X = X(:,end-120:end) ;
+elseif strcmp(flag_rolling, 'rec')
+    % do nothing
+else
+    disp('incorrectly specified flag_rolling. Abort!');
+    abort;
 end
-
 
 % --------------
 % options

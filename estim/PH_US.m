@@ -50,11 +50,11 @@ elseif modspec == 2
 elseif modspec == 3
     % surveys in levels, rolling estimation window
     flag_surveydiff = 'level' ;
-    flag_rolling = 'roll' ;
+    flag_rolling = 'rolling' ;
 elseif modspec == 4
     % surveys in 1st diffs, rolling estimation window
     flag_surveydiff = 'diff' ;
-    flag_rolling = 'roll' ;
+    flag_rolling = 'rolling' ;
 end
 
 % ----------------------------------------------------------------------- %
@@ -69,19 +69,25 @@ X = datasets(v).data_fredmd' ;
 
 % ------------------
 % - BOS surveys in levels or diff?
-
-if flag_surveydiff == 1
+if strcmp(flag_surveydiff, 'diff')
     X = [X ; datasets(v).data_bos_sa_diff'];
-else
+elseif strcmp(flag_surveydiff, 'level')
     X = [X ; datasets(v).data_bos_sa_level'];
+else
+    disp('incorrectly specified flag_surveydiff. Abort!');
+    abort;
 end
 
 % ------------------
 % - recursive or rolling estimation window ?
-
-if flag_rolling == 1 
+if strcmp(flag_rolling, 'rolling') 
     yQ = yQ(1,end-120:end) ;
     X = X(:,end-120:end) ;
+elseif strcmp(flag_rolling, 'rec')
+    % do nothing
+else
+    disp('incorrectly specified flag_rolling. Abort!');
+    abort;
 end
 
 % check we have no more than 50 percent missing
