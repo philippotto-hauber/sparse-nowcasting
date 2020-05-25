@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -N calc_inefff
+#PBS -j o
+#PBS -o array.%P.out
+#PBS -b 1
+#PBS -l cpunum_job=8
+#PBS -l memsz_job=10gb
+#PBS -l elapstim_req=00:30:00
+#PBS -q clmedium    
+
+
+cd  $PBS_O_WORKDIR
+
+module load R3.6.0
+R --vanilla --slave < calc_inefffac.R   
+
+# Ausgabe der verbrauchten Ressourcen (Rechenzeit, Hauptspeicher) nach Jobende
+/opt/nec/nqsv/bin/qstat -f ${PBS_JOBID/0:/}
+
