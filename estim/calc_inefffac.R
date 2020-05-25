@@ -9,7 +9,7 @@ library(dplyr)
 library(doParallel)
 
 # parallel
-registerDoParallel(cores=4)
+registerDoParallel(cores=8)
 
 # number of draws
 Ndraws <- 1000
@@ -48,14 +48,14 @@ for (country in Ncountries)
   if (country == "GER")
   {
     Nvintages <- seq(1, 157)
-    dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/PH_GER/"
-    #dirname <- "../PH_GER/"
+    #dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/PH_GER/"
+    dirname <- "../../PH_GER/"
   } 
   else if (country == "US")
   {
     Nvintages <- seq(1, 229) 
-    dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/PH_US/"
-    #dirname <- "../PH_US/"
+    #dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/PH_US/"
+    dirname <- "../../PH_US/"
   }
   
   # merge spec details into one big loop
@@ -146,4 +146,5 @@ ineff_facs$country <- as.factor(ineff_facs$country)
 ineff_facs$prior <- as.factor(ineff_facs$prior)
 
 # save to file
-save(ineff_facs, file = "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/ineff_facs.Rda")
+#save(ineff_facs, file = "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/ineff_facs.Rda")
+save(ineff_facs, file = "ineff_facs.Rda")
