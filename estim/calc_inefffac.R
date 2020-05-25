@@ -2,11 +2,11 @@ rm(list = ls())
 ###################################################
 
 # libraries
-library(coda)
-library(rmatio)
-library(ggplot2)
-library(dplyr)
-library(doParallel)
+suppressMessages(library(coda))
+suppressMessages(library(rmatio, lib.loc = "~/R_libs"))
+suppressMessages(library(ggplot2))
+suppressMessages(library(dplyr))
+suppressMessages(library(doParallel))
 
 # parallel
 registerDoParallel(cores=8)
@@ -49,13 +49,13 @@ for (country in Ncountries)
   {
     Nvintages <- seq(1, 157)
     #dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/PH_GER/"
-    dirname <- "../../PH_GER/"
+    dirname <- "../../PH_GER/matfiles/"
   } 
   else if (country == "US")
   {
     Nvintages <- seq(1, 229) 
     #dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/PH_US/"
-    dirname <- "../../PH_US/"
+    dirname <- "../../PH_US/matfiles/"
   }
   
   # merge spec details into one big loop
