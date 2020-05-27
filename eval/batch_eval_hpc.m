@@ -43,11 +43,11 @@ truegdps = {'first', 'second'} ;
 % ----------------------------
 % - switches -----------------
 % ----------------------------
-switch_eval_matfiles = 'on' ; 
-switch_eval_tables = 'on' ; 
-switch_eval_pointnowcasts = 'on' ; 
-switch_eval_cumsum = 'on' ; 
-switch_eval_densities = 'on' ; 
+switch_eval_matfiles = 'off' ; 
+switch_eval_tables = 'off' ; 
+switch_eval_pointnowcasts = 'off' ; 
+switch_eval_cumsum = 'off' ; 
+switch_eval_densities = 'off' ; 
 switch_eval_latextables = 'on'; 
 
 % ----------------------------
