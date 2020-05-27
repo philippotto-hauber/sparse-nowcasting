@@ -12,7 +12,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
 
     % - USER INPUT ------------------------------------------------------ %
     % ------------------------------------------------------------------- %
-    fontsize = 'scriptsize'; % 
+    fontsize = 'tiny'; % 
     linestep = '0.0'; % step size between model blocks
 
     evaloptions.Nhs = [2] ; % forecast horizons
