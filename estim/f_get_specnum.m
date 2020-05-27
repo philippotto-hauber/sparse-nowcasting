@@ -5,7 +5,7 @@ function specnum = f_get_specnum(v, Nprior, Nr, Np, flag_survey, flag_recroll, f
 % be executed locally. 
 
 if strcmp(flag_country, 'US')
-    Nvintages = 1:219;
+    Nvintages = 1:229;
 elseif strcmp(flag_country, 'GER')
     Nvintages = 1:157; 
 else
