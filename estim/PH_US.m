@@ -1,9 +1,13 @@
-function PH_US(Nspec)
+function PH_US(Nspec, random_seed)
 
 if (isdeployed)
     maxNumCompThreads(1);
-    Nspec = str2double(Nspec) ;
+    Nspec = str2double(Nspec);
+    random_seed = str2double(random_seed);
 end
+
+% set random seed
+rng(random_seed)
 
 % ----------------------------------------------------------------------- %
 % ----- options --------------------------------------------------------- %
