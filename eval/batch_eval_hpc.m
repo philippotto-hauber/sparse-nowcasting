@@ -38,7 +38,7 @@ Nps = [1 3] ;
 countries = {'US'} ; 
 samples = {'rec', 'rolling'} ; 
 surveys = {'level', 'diff'} ; 
-truegdps = {'first', 'second'} ; 
+truegdps = {'first', 'second', 'final'} ; 
 
 % ----------------------------
 % - switches -----------------
