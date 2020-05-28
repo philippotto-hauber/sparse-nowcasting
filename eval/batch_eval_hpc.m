@@ -11,7 +11,7 @@ end
 % back out flag_sample, survey and truegdp from Nspec
 Nsurveys = {'level', 'diff'};
 Nsamples = {'rec', 'rolling'};
-Ntruegdps = {'first', 'second'};
+Ntruegdps = {'first', 'second', 'final'};
 Nps = [1, 3];
 
 tmp = repmat(Nsurveys, length(Nsamples) * length(Ntruegdps) * length(Nps), 1); tmp_survey = tmp(:);
@@ -34,20 +34,14 @@ end
 set(0,'DefaultFigureVisible','off') 
 
 
-Nps = [1 3] ; 
-countries = {'US'} ; 
-samples = {'rec', 'rolling'} ; 
-surveys = {'level', 'diff'} ; 
-truegdps = {'first', 'second', 'final'} ; 
-
 % ----------------------------
 % - switches -----------------
 % ----------------------------
-switch_eval_matfiles = 'off' ; 
-switch_eval_tables = 'off' ; 
-switch_eval_pointnowcasts = 'off' ; 
-switch_eval_cumsum = 'off' ; 
-switch_eval_densities = 'off' ; 
+switch_eval_matfiles = 'on' ; 
+switch_eval_tables = 'on' ; 
+switch_eval_pointnowcasts = 'on' ; 
+switch_eval_cumsum = 'on' ; 
+switch_eval_densities = 'on' ; 
 switch_eval_latextables = 'on'; 
 
 % ----------------------------
