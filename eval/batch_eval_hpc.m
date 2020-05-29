@@ -17,7 +17,7 @@ Nps = [1, 3];
 tmp = repmat(Nsurveys, length(Nsamples) * length(Ntruegdps) * length(Nps), 1); tmp_survey = tmp(:);
 tmp = repmat(Nsamples, length(Ntruegdps) * length(Nps), length(Nsurveys)); tmp_sample = tmp(:);
 tmp = repmat(Ntruegdps, length(Nps), length(Nsurveys) * length(Nsamples)); tmp_truegdp = tmp(:);
-tmp = repmat(Nps, 1, length(Nps) *length(Nsurveys) * length(Nsamples)); tmp_Np = tmp(:); 
+tmp = repmat(Nps, 1, length(Ntruegdps) * length(Nps) *length(Nsurveys) * length(Nsamples)); tmp_Np = tmp(:); 
 
 % back out flags
 flag_survey = tmp_survey{Nspec}; 
