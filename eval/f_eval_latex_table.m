@@ -59,7 +59,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     Ncols_per_sample = length(evaloptions.names_subsamples) * length(evaloptions.Nhs) * length(evaloptions.metrics);
 
     fprintf(fid, ['\\begin{threeparttable}[p]\n\\caption{' str_caption '}\n\\label{' str_label '}\n\\' fontsize '\n']);
-    fprintf(fid, '\\begin{tabularx}{ c l');
+    fprintf(fid, '\\begin{tabularx}{0.7\\textwidth}{ c l');
 
     tmp1 = repmat(' Y ', 1, length(evaloptions.Nhs));
     counter = 1;
