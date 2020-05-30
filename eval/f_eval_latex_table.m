@@ -59,9 +59,9 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     Ncols_per_sample = length(evaloptions.names_subsamples) * length(evaloptions.Nhs) * length(evaloptions.metrics);
 
     fprintf(fid, ['\\begin{threeparttable}[p]\n\\caption{' str_caption '}\n\\label{' str_label '}\n\\' fontsize '\n']);
-    fprintf(fid, '\\begin{tabular}{ c l');
+    fprintf(fid, '\\begin{tabularx}{ c l');
 
-    tmp1 = repmat(' c ', 1, length(evaloptions.Nhs));
+    tmp1 = repmat(' Y ', 1, length(evaloptions.Nhs));
     counter = 1;
     tmp2 = tmp1; 
     while counter < length(evaloptions.metrics)
@@ -72,7 +72,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     counter = 1; 
     tmp3 = tmp2; 
     while counter < length(evaloptions.names_subsamples)        
-        tmp3 = [tmp3 ' !{\\vrule width 0.7pt} ' tmp2];
+        tmp3 = [tmp3 '  ' tmp2];
         counter = counter + 1;
     end
     
@@ -147,7 +147,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
 
     % - append lower body ----------------------------------------------- %
     % ------------------------------------------------------------------- %
-    fprintf(fid, ['\\bottomrule\n\\end{tabular}\n\\begin{tablenotes}\n\\' fontsize '\n\\item ' str_notes]);
+    fprintf(fid, ['\\bottomrule\n\\end{tabularx}\n\\begin{tablenotes}\n\\' fontsize '\n\\item ' str_notes]);
     fprintf(fid, '\n\\end{tablenotes}\n\\end{threeparttable}\n');
 
     % - close file ------------------------------------------------------ %
