@@ -50,8 +50,13 @@ HPC file management
  * /benchmark US: benchmark B-AR models that were formerly in the respective country folder
  * trueGDPUS.mat, truegdpGER.mat: GDP growth realizations (copied from data folder)
  * /GER 
-       - /level rec/.. result files
+       - graphs and tables for different model specs
  * /US 
-       - /level rec/.. result files
+       - graphs and tables for different model specs
+ * results_eval mat files/...: folder containing the results_eval matfiles for the different model specs
+ * latex_tables/...: folder containing the LaTEX tables generated as part of the evaluation routine
+ * batch_eval_hpc: compiled MATLAB function that runs the evaluation
+ * batchUS.nqs: batch-file to call batch_eval_hpc for the US model specs
+ * batchGER.nqs: batch-file to call batch_eval_hpc for the German model specs
 
 
