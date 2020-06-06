@@ -27,6 +27,7 @@ C:/Users/ * / Disseration/sparse nowcasting
   * /estim
     * ineff_facs.Rda: data frame containing the inefficiency factors of the different models (calculated using the script in the repo /estim/calc_inefffac.R
     * plot_ineff_facs.pdf: figure plotting the inefficiency factors (output from the repo script /estim/plot_ineff_fac.R
+    * extreme draws PMNM/...: folder containing pdfs and mat-files documenting some model specifications where the PMNM prior led to some extreme draws for the predictive density. These were subsequently rerun with another random seed. 
 
   * /eval
     * /GER (copied from HPC folder)
