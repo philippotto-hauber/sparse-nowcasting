@@ -27,16 +27,30 @@ C:/Users/ * / Disseration/sparse nowcasting
   * /estim
     * ineff_facs.Rda: data frame containing the inefficiency factors of the different models (calculated using the script in the repo /estim/calc_inefffac.R
     * plot_ineff_facs.pdf: figure plotting the inefficiency factors (output from the repo script /estim/plot_ineff_fac.R
+
   * /eval
-    * /GER
-      - /benchmark: B-AR(1) forecasts of GDP corresponding to the vintages in ../*/datasetsGER.mat
-      - /level rec/.. result files
-    * /US
-      - /benchmark: B-AR(1) forecasts of GDP corresponding to the vintages in ../*/datasetsUS.mat 
-      - /level rec/.. result files
+    * /GER (copied from HPC folder)
+       - /level rec/.. result files
+    * /US (copied from HPC folder)
+       - /level rec/.. result files
     * /tables (linked): formatted evaluation tables that are linked to tables folders in /GER and /US
     * /latex_tables: tables in /GER and /US but in .tex format
+  
   * /documentation (this folder contains files that arent used locally but stored for documentation purposes)
     * /PH_GER: mat files with predictive densities for German GDP
     * /PH_US: mat files with predictive densities for US GDP
     * /results eval mat files: evaluation mat files for different model specs (surveys in levels vs diffs; first, second release; Np = {1, 3}
+
+
+HPC file management
+
+/sfs/fs2/work-sh1/swwiw663/eval-hpc
+ * /benchmark GER: benchmark B-AR models that were formerly in the respective country folder
+ * /benchmark US: benchmark B-AR models that were formerly in the respective country folder
+ * trueGDPUS.mat, truegdpGER.mat: GDP growth realizations (copied from data folder)
+ * /GER 
+       - /level rec/.. result files
+ * /US 
+       - /level rec/.. result files
+
+

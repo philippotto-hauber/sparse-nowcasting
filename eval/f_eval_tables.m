@@ -6,13 +6,12 @@ evaloptions = load_evaloptions(flag_country) ;
 
 % - directories ---
 % ----------------------------
-dir_load = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\' flag_country '\' flag_survey ' ' flag_sample '\Np = ' num2str(Np) '\' flag_truegdp '\'] ;
-dir_save = [dir_load 'tables\'] ; 
+dir_save = [pwd '/' flag_country '/' flag_survey ' ' flag_sample '/Np = ' num2str(Np) '/' flag_truegdp '/tables/'] ; 
 if exist(dir_save, 'dir') ~= 7;mkdir(dir_save); end  
 
 % - load forecast structure
 % -----------------
-load([dir_load 'results_eval.mat'])
+load(['results_eval mat files/results_eval_' flag_country '_' flag_sample '_' flag_survey '_Np' num2str(Np) '_' flag_truegdp '.mat'])
 
 % - loop over subsamples
 % -----------------
@@ -124,7 +123,7 @@ for i = 1 : length(evaloptions.indexstarts)
     % - save big table to xls
     % ------------------------------
     datatable = [rmsfe_all logscore_all crps_all] ; 
-    xlswrite([dir_save 'datatable_allR_plus_pool_' results_eval.quarters{indexstart} '_' results_eval.quarters{indexend} '.xlsx'],datatable)    
+    csvwrite([dir_save 'datatable_allR_plus_pool_' results_eval.quarters{indexstart} '_' results_eval.quarters{indexend} '.xlsx'],datatable)    
     
     % - save append current subsample to big big table
     % ----------------------------------------------------
@@ -133,4 +132,4 @@ end
 
 % - save big big table to xls
 % ------------------------------
-xlswrite([dir_save 'datatable_all_R_plus_pool_all_samples.xlsx'],datatable_all)
+csvwrite([dir_save 'datatable_all_R_plus_pool_all_samples.xlsx'],datatable_all)

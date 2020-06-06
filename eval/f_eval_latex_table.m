@@ -2,21 +2,21 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
 
     % - dir in & out ---------------------------------------------------- %
     % ------------------------------------------------------------------- %
-    dir_load = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\' flag_country '\' flag_survey ' ' flag_sample '\Np = ' num2str(Np) '\' flag_truegdp '\'] ;
-    dir_save = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\latex_tables\' ; 
+    dir_save = 'latex_tables/' ; 
     if exist(dir_save, 'dir') ~= 7;mkdir(dir_save); end  
 
     % - load eval structure and options --------------------------------- %
     % ------------------------------------------------------------------- %
-    load([dir_load 'results_eval.mat']);
+    load(['results_eval mat files/results_eval_' flag_country '_' flag_sample '_' flag_survey '_Np' num2str(Np) '_' flag_truegdp '.mat'])
     evaloptions = load_evaloptions(flag_country);
 
     % - USER INPUT ------------------------------------------------------ %
     % ------------------------------------------------------------------- %
-    fontsize = 'tiny'; % 
-    linestep = '0.1'; % step size between model blocks
+    fontsize = 'scriptsize'; % 
+    linestep = '0.0'; % step size between model blocks
 
-    evaloptions.Nhs = [2, 4] ; % forecast horizons
+    evaloptions.Nhs = [2] ; % forecast horizons
+    evaloptions.Nrs = [1, 2, 5, 8] ; % # of factors to include in the table (pool always included and note that it is calculated over Nr = 1:10)
 
     % subsamples
     evaloptions.indexstarts = evaloptions.indexstarts([1 3]);
@@ -39,12 +39,12 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
 
     % notes to table
     if strcmp(flag_country, 'GER')
-    str_notes = ['RMSFE is the root mean squared forecast error, logS and CRPS are the average . All model metrics are relativ to the B-AR benchmark (see text for details).' ...
-                 'The log score is negatively orientated so that a value in the table below 1 corresponds to a better performance than the benchmark.' ...
+    str_notes = ['RMSFE is the root mean squared forecast error, logS and CRPS are the average log score and continuous ranked probability score. All entries for the factor models are relative to the B-AR benchmark (see text for details)' ...
+                 ' and negatively orientated so that a value in the table below 1 corresponds to a better performance than the benchmark.' ...
                  'Forecast horizon h is in months. The full sample period is 2006Q1-2018Q4, the post-crisis sample starts in 2010Q1 and ends in 2018Q4.'];
     elseif strcmp(flag_country, 'US')
-    str_notes = ['RMSFE is the root mean squared forecast error, logS and CRPS are the average . All model metrics are relativ to the B-AR benchmark (see text for details).' ...
-                 'The log score is negatively orientated so that a value in the table below 1 corresponds to a better performance than the benchmark.' ...
+    str_notes = ['RMSFE is the root mean squared forecast error, logS and CRPS are the average log score and continuous ranked probability score. All entries for the factor models are relative to the B-AR benchmark (see text for details)' ...
+                 ' and negatively orientated so that a value in the table below 1 corresponds to a better performance than the benchmark.' ...
                  'Forecast horizon h is in months. The full sample period is 2000Q1-2018Q4, the post-crisis sample starts in 2010Q1 and ends in 2018Q4.'];    
     end
     
@@ -59,20 +59,20 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     Ncols_per_sample = length(evaloptions.names_subsamples) * length(evaloptions.Nhs) * length(evaloptions.metrics);
 
     fprintf(fid, ['\\begin{threeparttable}[p]\n\\caption{' str_caption '}\n\\label{' str_label '}\n\\' fontsize '\n']);
-    fprintf(fid, '\\begin{tabular}{ c l');
+    fprintf(fid, '\\begin{tabularx}{0.7\\textwidth}{ c l');
 
-    tmp1 = repmat(' c ', 1, length(evaloptions.Nhs));
+    tmp1 = repmat(' Y ', 1, length(evaloptions.Nhs));
     counter = 1;
     tmp2 = tmp1; 
     while counter < length(evaloptions.metrics)
-        tmp2 = [tmp2 ' | ' tmp1];
+        tmp2 = [tmp2 ' ' tmp1];
         counter = counter + 1;
     end
     
     counter = 1; 
     tmp3 = tmp2; 
     while counter < length(evaloptions.names_subsamples)        
-        tmp3 = [tmp3 ' !{\\vrule width 0.7pt} ' tmp2];
+        tmp3 = [tmp3 '  ' tmp2];
         counter = counter + 1;
     end
     
@@ -116,7 +116,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     
     vals_bar = getvals(results_eval, [], [], 0, 1, evaloptions);
     addline(fid, vals_bar, 'B-AR', [])
-    fprintf(fid, ['\\hspace{' linestep 'cm}\\\\\n']);
+    fprintf(fid, ['\\vspace{' linestep 'cm}\\\\\n']);
 
     % - models for different R ------------------------------------------ %
     % ------------------------------------------------------------------- %
@@ -130,7 +130,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
                 addline(fid, vals ./ vals_bar, '', evaloptions.names_priors{p})
             end
         end
-        fprintf(fid, ['\\hspace{' linestep 'cm}\\\\\n']);
+        fprintf(fid, ['\\vspace{' linestep 'cm}\\\\\n']);
     end
 
     % - pool (only loop over priors!) ----------------------------------- %
@@ -147,7 +147,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
 
     % - append lower body ----------------------------------------------- %
     % ------------------------------------------------------------------- %
-    fprintf(fid, ['\\bottomrule\n\\end{tabular}\n\\begin{tablenotes}\n\\' fontsize '\n\\item ' str_notes]);
+    fprintf(fid, ['\\bottomrule\n\\end{tabularx}\n\\begin{tablenotes}\n\\' fontsize '\n\\item ' str_notes]);
     fprintf(fid, '\n\\end{tablenotes}\n\\end{threeparttable}\n');
 
     % - close file ------------------------------------------------------ %

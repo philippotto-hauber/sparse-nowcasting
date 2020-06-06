@@ -6,14 +6,13 @@ function f_eval_plot_densities(flag_survey, flag_sample, flag_truegdp, Np, flag_
 
     % - directories ---
     % ----------------------------
-    dir_load = ['C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\' flag_country '\' flag_survey ' ' flag_sample '\Np = ' num2str(Np) '\' flag_truegdp '\'] ;
-    dir_save = [dir_load 'graphs\'] ; 
+    dir_save = [pwd '/' flag_country '/' flag_survey ' ' flag_sample '/Np = ' num2str(Np) '/' flag_truegdp '/graphs/'] ; 
     if exist(dir_save, 'dir') ~= 7;mkdir(dir_save); end  
-    dir_truegdp = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\out\' ;
+    dir_truegdp = '' ;
 
     % - load forecast structure
     % -----------------
-    load([dir_load 'results_eval.mat'])
+    load(['results_eval mat files/results_eval_' flag_country '_' flag_sample '_' flag_survey '_Np' num2str(Np) '_' flag_truegdp '.mat'])
 
     % - load true gdp mat-file ---
     % ----------------------------
@@ -113,12 +112,12 @@ function f_eval_plot_densities(flag_survey, flag_sample, flag_truegdp, Np, flag_
     % -convert ps figure to pdf
     % ------------------------------ 
     %
-    ps2pdf('psfile', filename_ps , 'pdffile', filename_pdf , ...
-       'gspapersize', 'a4', ...
-       'gscommand', 'C:\Program Files\gs9.26\bin\gswin64c.exe', ...
-       'gsfontpath', 'C:\Program Files\gs9.26\Resource\Font', ...
-       'gslibpath', 'C:\Program Files\gs9.26\lib')
-    delete(filename_ps) 
+%     ps2pdf('psfile', filename_ps , 'pdffile', filename_pdf , ...
+%        'gspapersize', 'a4', ...
+%        'gscommand', 'C:\Program Files\gs9.26\bin\gswin64c.exe', ...
+%        'gsfontpath', 'C:\Program Files\gs9.26\Resource\Font', ...
+%        'gslibpath', 'C:\Program Files\gs9.26\lib')
+%     delete(filename_ps) 
 end
 
 function f_plotdens(densNIG,densMG,densPMNM,densHS,densNd,densBAR,truegdp,nametruegdp ,titlename)
