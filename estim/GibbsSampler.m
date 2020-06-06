@@ -3,6 +3,8 @@ function draws = GibbsSampler( X , yQ , priors , options )
     % preallocate space for draws
     if options.flag_samplemoments == 0
         draws.nowcast = NaN( 1  , options.Nreplic/options.Nthin ) ;
+	draws.eta = NaN(options.Nt, options.Nr, options.Nreplic/options.Nthin) ;
+	draws.lambda = NaN(options.Nm+options.Nq, options.Nr, options.Nreplic/options.Nthin) ;
         if options.Nh == 3
             draws.forecast = NaN( 1 , options.Nreplic/options.Nthin ) ;
         end
@@ -220,6 +222,8 @@ function draws = GibbsSampler( X , yQ , priors , options )
         if m > options.Nburnin && mod(m - options.Nburnin,options.Nthin) == 0        
             if options.flag_samplemoments == 0
                 draws.nowcast( :  , (m - options.Nburnin)/options.Nthin ) = nowcast ;
+		draws.eta(:, :, (m - options.Nburnin)/options.Nthin) = eta;
+		draws.lambda(:, :, (m - options.Nburnin)/options.Nthin) = lambda;
                 if options.Nh == 3
                     draws.forecast( : , (m - options.Nburnin)/options.Nthin ) = forecast;
                 end
