@@ -1,4 +1,16 @@
 clear; clc; close all; 
+%_________________________________________________________________________%
+%_This code calculates the squared forecast errors for all draws and 
+%_and saves csv files for different number of factors (Nr) and forecast
+%_horizons (Nh). Files are saved to 
+%_ C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\sfe_distr\ 
+%_hard coded input are the input file destinations (dir_in & dir_gdp)
+%_as well as spec details such as Np (1), flag_gdp (first),  
+%_flag_sample (rec) and flag_survey (level).
+%_The resulting csv files can then be loaded by Julia code
+%_that plots asymmetric violin charts to highlight differences in the 
+%_distribution of the benchmark B-AR(1) and the different priors.
+%_________________________________________________________________________%
 
 dir_out = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\eval\sfe_distr\';
 if exist(dir_out, 'dir') ~= 7;mkdir(dir_out); end  
@@ -47,7 +59,7 @@ for i_country = 1 : length(Ncountries)
                 sfe = (dens - truegdp_strct.first') .^ 2;
                 sfe_vec(:, m) = sfe(:); 
             end
-            filename = [dir_out 'sfedistr_' flag_country '_' num2str(Nr) '_' num2str(Nh) '.csv'];
+            filename = [dir_out 'sfedistr_' flag_country '_Nr' num2str(Nr) '_Nh' num2str(Nh) '.csv'];
             fid = fopen(filename, 'w'); 
             fprintf(fid, ['%s', repmat(', %s', 1, length(models)-1)], models{:});
             fprintf(fid, '\n');
