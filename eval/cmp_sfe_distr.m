@@ -61,7 +61,7 @@ for i_country = 1 : length(Ncountries)
             end
             filename = [dir_out 'sfedistr_' flag_country '_Nr' num2str(Nr) '_Nh' num2str(Nh) '.csv'];
             fid = fopen(filename, 'w'); 
-            fprintf(fid, ['%s', repmat(', %s', 1, length(models)-1)], models{:});
+            fprintf(fid, ['%s', repmat(',%s', 1, length(models)-1)], models{:});
             fprintf(fid, '\n');
             for n_row = 1:size(sfe_vec, 1)            
                 fprintf(fid, ['%.4f', repmat(', %.4f', 1, length(models)-1)], sfe_vec(n_row, :));   
