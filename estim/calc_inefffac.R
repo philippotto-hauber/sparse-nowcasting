@@ -120,7 +120,8 @@ for (country in Ncountries)
       ineff <- Ndraws / coda::effectiveSize(coda::as.mcmc(draws_mat, thin = Nthin)) 
       
       # append to df
-      df_out <-   data.frame(surveysample = rep(paste0(survey, ", ", sample), ncol(draws_mat)),
+      df_out <-   data.frame(sample = rep(sample, ncol(draws_mat)),
+                              survey = rep(survey, ncol(draws_mat)),
                               Np = rep(paste("P =", Nps_loop[ind]), ncol(draws_mat)),
                               Nr = rep(Nrs_loop[ind], ncol(draws_mat)),
                               prior = rep(priors[Npriors_loop[ind]], ncol(draws_mat)),
@@ -140,7 +141,8 @@ end_time <- Sys.time()
 print(end_time - start_time)
 
 # convert Np, prior, country and surveysample to factors
-ineff_facs$surveysample <- as.factor(ineff_facs$surveysample)
+ineff_facs$survey <- as.factor(ineff_facs$survey)
+ineff_facs$sample <- as.factor(ineff_facs$sample)
 ineff_facs$Np <- as.factor(ineff_facs$Np)
 ineff_facs$country <- as.factor(ineff_facs$country)
 ineff_facs$prior <- as.factor(ineff_facs$prior)
