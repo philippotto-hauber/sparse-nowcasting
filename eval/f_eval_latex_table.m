@@ -35,17 +35,17 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     
     % caption
     if strcmp(flag_country, 'GER'); name_country = 'Germany'; elseif strcmp(flag_country, 'US'); name_country = 'United States'; end
-    str_caption = [name_country ' (' flag_truegdp ', ' flag_survey ', ' flag_sample ', P = ' num2str(Np) ')']; 
+    str_caption = [name_country ' (' flag_truegdp ', ' flag_survey ', ' flag_sample ')']; 
 
     % notes to table
     if strcmp(flag_country, 'GER')
     str_notes = ['RMSFE is the root mean squared forecast error, logS and CRPS are the average log score and continuous ranked probability score. All entries for the factor models are relative to the B-AR benchmark (see text for details)' ...
                  ' and negatively orientated so that a value in the table below 1 corresponds to a better performance than the benchmark.' ...
-                 'Forecast horizon h is in months. The full sample period is 2006Q1-2018Q4, the post-crisis sample starts in 2010Q1 and ends in 2018Q4.'];
+                 ' The forecast horizon h is in months. The full sample period is 2006Q1-2018Q4, the post-crisis sample starts in 2010Q1 and ends in 2018Q4.'];
     elseif strcmp(flag_country, 'US')
     str_notes = ['RMSFE is the root mean squared forecast error, logS and CRPS are the average log score and continuous ranked probability score. All entries for the factor models are relative to the B-AR benchmark (see text for details)' ...
                  ' and negatively orientated so that a value in the table below 1 corresponds to a better performance than the benchmark.' ...
-                 'Forecast horizon h is in months. The full sample period is 2000Q1-2018Q4, the post-crisis sample starts in 2010Q1 and ends in 2018Q4.'];    
+                 ' The forecast horizon h is in months. The full sample period is 2000Q1-2018Q4, the post-crisis sample starts in 2010Q1 and ends in 2018Q4.'];    
     end
     
     % - open file ------------------------------------------------------- %
