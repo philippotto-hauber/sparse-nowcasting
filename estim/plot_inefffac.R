@@ -8,10 +8,13 @@ filename_out <- "plot_ineff_facs.pdf"
 # load data
 load(paste0(dirname, filename_in))
 
+# filter out Np == 1
+ineff_facs %>% filter(Np == "P = 1") -> ineff_facs
+
 # plots
 ggplot(ineff_facs) + 
   geom_boxplot(aes(x=prior,y=value, color = country), outlier.size = 1, outlier.shape = 16)+
-  labs(x = "", y = "", caption = "P: number of lags in factor VAR, rec/rolling: recursive or rolling estimation window, level/diff: survey variables in levels or first difference\nPriors: HS+ = Horseshoe plus, MG = multiplicative Gamma, NIG = Normal Inverse Gamma, Nd = Normal diffuse, PMNM = point mass normal mixture.\n For details, see main text.")+
+  labs(x = "", y = "", caption = "rec/rolling: recursive or rolling estimation window, level/diff: survey variables in levels or first difference\nPriors: HS+ = Horseshoe plus, MG = multiplicative Gamma, NIG = Normal Inverse Gamma, \nNd = Normal diffuse, PMNM = point mass normal mixture. For details, see main text.")+
   facet_grid(surveysample ~ Np)+
   scale_y_continuous(breaks = c(50, 100), minor_breaks = c(50, 100))+
   theme_minimal()+
@@ -20,8 +23,8 @@ ggplot(ineff_facs) +
         legend.title = element_blank(),
         legend.position = "bottom",
         panel.grid.major.x = element_blank(),
-        plot.caption = element_text(size = 5))
+        plot.caption = element_text(size = 8))
 
 # save file as full size pdf
 #ggsave(file="a4_output.pdf", width = 0.5*210, height = 0.5*297, units = "mm")
-ggsave(file = paste0(dirname, filename_out), width = 150, height = 150, units = "mm")
+#ggsave(file = paste0(dirname, filename_out), width = 150, height = 150, units = "mm")
