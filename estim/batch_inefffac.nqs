@@ -5,7 +5,7 @@
 #PBS -b 1
 #PBS -l cpunum_job=8
 #PBS -l memsz_job=10gb
-#PBS -l elapstim_req=00:30:00
+#PBS -l elapstim_req=02:30:00
 #PBS -q clmedium    
 
 
