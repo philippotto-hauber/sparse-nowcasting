@@ -177,7 +177,7 @@ function vals = getvals(results_eval, p, r, flag_pool, flag_benchmark, evaloptio
                     tmp = results_eval.priors(p).R(r).horizon(h).(m)(indexstart:indexend);
                 end
                 if strcmp(m, 'sfe')
-                    vals(counter) = mean(sqrt(mean(tmp, 1)));
+                    vals(counter) = mean(sqrt(mean(tmp, 1))); % RMSFE is calculated for each draw, then averaged!
                 else
                     vals(counter) = mean(tmp);
                 end
