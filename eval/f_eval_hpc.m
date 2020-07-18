@@ -8,10 +8,10 @@ evaloptions = load_evaloptions(flag_country) ;
 % - directories ---
 % ----------------------------
 dir_truegdp = '' ;
-%dir_models = ['../PH_' flag_country '/matfiles/'] ; 
-dir_models = []; 
-%dir_benchmark = ['benchmark_' flag_country '/'] ; 
-dir_benchmark = [] ; 
+dir_models = ['../PH_' flag_country '/matfiles/'] ; 
+%dir_models = []; 
+dir_benchmark = ['benchmark_' flag_country '/'] ; 
+%dir_benchmark = [] ; 
 dir_out = ['results_eval mat files/'] ; 
 if exist(dir_out, 'dir') ~= 7;mkdir(dir_out); end  
 
