@@ -42,13 +42,13 @@ for i = 1 : length(evaloptions.indexstarts)
 
         for h = 1:evaloptions.Nhs 
             
-            temp_rmsfe = [ sqrt(mean(results_eval.benchmark_BAR.horizon(h).sfe(indexstart:indexend))) ] ; 
+            temp_rmsfe = [ mean(sqrt(mean(results_eval.benchmark_BAR.horizon(h).sfe(indexstart:indexend, :), 1))) ] ; 
             temp_logscore = [  mean(results_eval.benchmark_BAR.horizon(h).logscore(indexstart:indexend))] ;
             temp_crps = [ mean(results_eval.benchmark_BAR.horizon(h).crps(indexstart:indexend))] ; 
 
             for p = evaloptions.Npriorspecs   
 
-                    temp_rmsfe = [temp_rmsfe; sqrt(mean(results_eval.priors(p).R(r).horizon(h).sfe(indexstart:indexend)))] ;
+                    temp_rmsfe = [temp_rmsfe; mean(sqrt(mean(results_eval.priors(p).R(r).horizon(h).sfe(indexstart:indexend, :), 1)))] ;
                     temp_logscore = [temp_logscore; mean(results_eval.priors(p).R(r).horizon(h).logscore(indexstart:indexend))] ;
                     temp_crps = [temp_crps; mean(results_eval.priors(p).R(r).horizon(h).crps(indexstart:indexend))] ;
 
