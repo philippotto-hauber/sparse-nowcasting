@@ -205,14 +205,6 @@ for m = 1 : Nreplics
 end
 end
 
-function [sfe, logscore, crps] = f_compute_sfe_logscore_crps(draws,truegdp,flag_computelogscore)
-
-sfe = mean((draws - truegdp) .^2);
-logscore = f_computelogscore(draws,truegdp,flag_computelogscore);
-crps = f_computeCRPS(draws',truegdp); % crps
-
-end
-
 function logscore = f_computelogscore(draws,truegdp,flag_computelogscore)
 
 if strcmp( flag_computelogscore , 'kde')    
