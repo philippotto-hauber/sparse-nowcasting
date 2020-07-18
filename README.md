@@ -41,6 +41,8 @@ C:/Users/ * / Disseration/sparse nowcasting
     * /PH_GER: mat files with predictive densities for German GDP
     * /PH_US: mat files with predictive densities for US GDP
     * /results eval mat files: evaluation mat files for different model specs (surveys in levels vs diffs; first, second release; Np = {1, 3}
+    * /benchmark_US: mat files containing predictive densities of the B-AR(1) benchmark for US GDP
+    * /benchmark_GER: mat files containing predictive densities of the B-AR(1) benchmark for German GDP
 
 
 HPC file management
