@@ -12,7 +12,7 @@ rm(list = ls())
 
 library(rmatio)
 
-dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim"
+dirname <- "C:/Users/Philipp/Documents/Dissertation/sparse nowcasting/estim/extreme draws PMNM"
 filename <- "PH_US_v209_prior3_Nr10_Np3_rolling_level_extremedraws"
 
 tmp <- read.mat(paste0(dirname, "/", filename, ".mat"))
