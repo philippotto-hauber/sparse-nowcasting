@@ -8,8 +8,10 @@ evaloptions = load_evaloptions(flag_country) ;
 % - directories ---
 % ----------------------------
 dir_truegdp = '' ;
-dir_models = ['../PH_' flag_country '/matfiles/'] ; 
-dir_benchmark = ['benchmark_' flag_country '/'] ; 
+%dir_models = ['../PH_' flag_country '/matfiles/'] ; 
+dir_models = []; 
+%dir_benchmark = ['benchmark_' flag_country '/'] ; 
+dir_benchmark = [] ; 
 dir_out = ['results_eval mat files/'] ; 
 if exist(dir_out, 'dir') ~= 7;mkdir(dir_out); end  
 
@@ -82,11 +84,11 @@ for p = evaloptions.Npriorspecs
 
                     % - load results mat-file
                     % -------------------------
-		    if strcmp(flag_sample, 'rolling')
-                    	load([dir_benchmark 'PH_' flag_country '_v' num2str(index_vs(h)) '_roll.mat'])
-		    elseif strcmp(flag_sample, 'rec')
-                    	load([dir_benchmark 'PH_' flag_country '_v' num2str(index_vs(h)) '_' flag_sample '.mat'])
-		    end
+                    if strcmp(flag_sample, 'rolling')
+                                load([dir_benchmark 'PH_' flag_country '_v' num2str(index_vs(h)) '_roll.mat'])
+                    elseif strcmp(flag_sample, 'rec')
+                                load([dir_benchmark 'PH_' flag_country '_v' num2str(index_vs(h)) '_' flag_sample '.mat'])
+                    end
 
                     % - select correct row and multiply with 100
 
@@ -100,10 +102,12 @@ for p = evaloptions.Npriorspecs
                     % - store density
                     % -------------------------
                     results_eval.benchmark_BAR.horizon(h).dens(q,:) = draws_temp ;
-
-                    % - compute log score, crps and forecast error
-                    % -----------------------------
-                    [results_eval.benchmark_BAR.horizon(h).sfe(q,1), results_eval.benchmark_BAR.horizon(h).logscore(q,1), results_eval.benchmark_BAR.horizon(h).crps(q,1)] = f_compute_sfe_logscore_crps(draws_temp,truegdp,evaloptions.computelogscore);
+                    
+                    % - store squared forecast errors, log score and crps
+                    % -------------------------
+                    results_eval.benchmark_BAR.horizon(h).sfe(q,:) = (draws_temp - truegdp) .^ 2;
+                    results_eval.benchmark_BAR.horizon(h).logscore(q,1) = f_computelogscore(draws_temp, truegdp, evaloptions.computelogscore);
+                    results_eval.benchmark_BAR.horizon(h).crps(q,1) = f_computeCRPS(draws_temp', truegdp); % crps ;
                 end
 
                 % ------------------------------------------------------------------------ %
@@ -131,13 +135,17 @@ for p = evaloptions.Npriorspecs
                     % -------------------------
                     dens_pool{r} = draws_temp ; 
 
-                    % - compute log score, crps and forecast error
+                    % - compute squared forecast errors, log score and
                     % -----------------------------
-                    [results_eval.priors(p).R(r).horizon(h).sfe(q,1), results_eval.priors(p).R(r).horizon(h).logscore(q,1), results_eval.priors(p).R(r).horizon(h).crps(q,1)] = f_compute_sfe_logscore_crps(draws_temp,truegdp,evaloptions.computelogscore);
+                    results_eval.priors(p).R(r).horizon(h).sfe(q,:) = (draws_temp - truegdp) .^ 2;
+                    results_eval.priors(p).R(r).horizon(h).logscore(q,1) = f_computelogscore(draws_temp, truegdp, evaloptions.computelogscore);
+                    results_eval.priors(p).R(r).horizon(h).crps(q,1)= f_computeCRPS(draws_temp', truegdp);
                 else
                     % equal weight pool
                     results_eval.priors(p).pool.horizon(h).dens{q} = f_pooldens_eqwgts(dens_pool , evaloptions.Nmultpool*evaloptions.Ndraws ) ;
-                    [results_eval.priors(p).pool.horizon(h).sfe(q,1), results_eval.priors(p).pool.horizon(h).logscore(q,1), results_eval.priors(p).pool.horizon(h).crps(q,1)] = f_compute_sfe_logscore_crps( results_eval.priors(p).pool.horizon(h).dens{q} , truegdp , evaloptions.computelogscore );
+                    results_eval.priors(p).pool.horizon(h).sfe(q,:) = (results_eval.priors(p).pool.horizon(h).dens{q} - truegdp) .^ 2;
+                    results_eval.priors(p).pool.horizon(h).logscore(q,1) = f_computelogscore(results_eval.priors(p).pool.horizon(h).dens{q}, truegdp, evaloptions.computelogscore);
+                    results_eval.priors(p).pool.horizon(h).crps(q,1) = f_computeCRPS(results_eval.priors(p).pool.horizon(h).dens{q},truegdp);
                 end                    
             end                        
         end                    
@@ -199,11 +207,9 @@ end
 
 function [sfe, logscore, crps] = f_compute_sfe_logscore_crps(draws,truegdp,flag_computelogscore)
 
-sfe = mean((draws - truegdp).^2) ; % forecast error
-
-logscore = f_computelogscore(draws,truegdp,flag_computelogscore) ;
-
-crps = f_computeCRPS(draws',truegdp) ; % crps
+sfe = mean((draws - truegdp) .^2);
+logscore = f_computelogscore(draws,truegdp,flag_computelogscore);
+crps = f_computeCRPS(draws',truegdp); % crps
 
 end
 
