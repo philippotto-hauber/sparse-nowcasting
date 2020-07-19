@@ -20,7 +20,8 @@ Nh = 2; % horizon = 2 months
 Nr = 5; % number of factors
 
 % load results_eval mat file
-load(['results_eval_' flag_country '_' flag_sample '_' flag_survey '_Np' num2str(Np) '_' flag_release '.mat'])
+dirname = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\documentation\results_eval mat files\';
+load([dirname 'results_eval_' flag_country '_' flag_sample '_' flag_survey '_Np' num2str(Np) '_' flag_release '.mat'])
 
 % calculate old and new RMSFE for benchmark B-AR and model, plotting the
 % two distributions of the RMSFE
