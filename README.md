@@ -34,7 +34,7 @@ C:/Users/ * / Disseration/sparse nowcasting
        - /level rec/.. result files
     * /US (copied from HPC folder)
        - /level rec/.. result files
-    * /tables (linked): formatted evaluation tables that are linked to tables folders in /GER and /US
+    * /tables (linked): formatted evaluation tables that are linked to tables folders in /GER and /US (Note that since the eval codes have been running on the HPC servers, the generated xls files are not properly generated and the links do **not** work!)
     * /latex_tables: tables in /GER and /US but in .tex format
   
   * /documentation (this folder contains files that arent used locally but stored for documentation purposes)
