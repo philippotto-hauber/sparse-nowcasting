@@ -172,9 +172,9 @@ function vals = getvals(results_eval, p, r, flag_pool, flag_benchmark, evaloptio
                 if flag_benchmark == 1
                     tmp = results_eval.benchmark_BAR.horizon(h).(m)(indexstart:indexend, :);
                 elseif flag_pool == 1
-                    tmp = results_eval.priors(p).pool.horizon(h).(m)(indexstart:indexend);
+                    tmp = results_eval.priors(p).pool.horizon(h).(m)(indexstart:indexend, :);
                 else
-                    tmp = results_eval.priors(p).R(r).horizon(h).(m)(indexstart:indexend);
+                    tmp = results_eval.priors(p).R(r).horizon(h).(m)(indexstart:indexend, :);
                 end
                 if strcmp(m, 'sfe')
                     vals(counter) = mean(sqrt(mean(tmp, 1))); % RMSFE is calculated for each draw, then averaged!
