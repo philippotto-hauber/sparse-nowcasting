@@ -28,7 +28,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     evaloptions.names_metrics = {'RMSFE', 'logS', 'CRPS'}; 
     
     % prior names
-    evaloptions.names_priors = {'NIG', 'MG', 'PMNM', 'HS', 'Nd'};
+    evaloptions.names_priors = {'NIG', 'MG', 'PMNM', 'HS+', 'Nd'};
 
     % label
     str_label = ['table:' flag_country '_' flag_truegdp '_' flag_survey '_' flag_sample '_Np' num2str(Np)];
