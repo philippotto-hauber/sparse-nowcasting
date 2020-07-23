@@ -67,13 +67,16 @@ function f_eval_plot_cumsum(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
                     end
                     subplot(evaloptions.Nhs,1,h)
 
-                    temp_metric_benchmark = results_eval.benchmark_BAR.horizon(h).(metric)(indexstart:indexend) ; 
+                    temp_metric_benchmark = mean(results_eval.benchmark_BAR.horizon(h).(metric)(indexstart:indexend, :), 2) ; 
                     temp_metric = [] ; 
                     for p = evaloptions.Npriorspecs
-                        if index_r == ( length( evaloptions.Nrs ) + 1 )
-                            temp_metric = [temp_metric results_eval.priors(p).pool.horizon(h).(metric)(indexstart:indexend)] ; 
+                        % calculate the mean across columns so that for the
+                        % sfe we take the average over draws (doesnt affect
+                        % log score or CRPS because their dim is Nx1!)
+                        if index_r == ( length( evaloptions.Nrs ) + 1 )                            
+                            temp_metric = [temp_metric mean(results_eval.priors(p).pool.horizon(h).(metric)(indexstart:indexend, : ), 2)] ; 
                         else
-                            temp_metric = [temp_metric results_eval.priors(p).R(r).horizon(h).(metric)(indexstart:indexend)] ; 
+                            temp_metric = [temp_metric mean(results_eval.priors(p).R(r).horizon(h).(metric)(indexstart:indexend, : ), 2)] ; 
                         end
                     end
 

@@ -28,7 +28,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     evaloptions.names_metrics = {'RMSFE', 'logS', 'CRPS'}; 
     
     % prior names
-    evaloptions.names_priors = {'NIG', 'MG', 'PMNM', 'HS', 'Nd'};
+    evaloptions.names_priors = {'NIG', 'MG', 'PMNM', 'HS+', 'Nd'};
 
     % label
     str_label = ['table:' flag_country '_' flag_truegdp '_' flag_survey '_' flag_sample '_Np' num2str(Np)];
@@ -160,7 +160,7 @@ end
 
 function vals = getvals(results_eval, p, r, flag_pool, flag_benchmark, evaloptions)
 % function that loops over samples, forecast metrics and horizons and
-% returns the values
+% returns the values of RMSFE, log score and CRPS
     counter = 0; 
     for s = 1 : length(evaloptions.indexstarts)
         indexstart = evaloptions.indexstarts(s); 
@@ -170,14 +170,14 @@ function vals = getvals(results_eval, p, r, flag_pool, flag_benchmark, evaloptio
             for h = evaloptions.Nhs
                 counter = counter + 1;
                 if flag_benchmark == 1
-                    tmp = results_eval.benchmark_BAR.horizon(h).(m)(indexstart:indexend);
+                    tmp = results_eval.benchmark_BAR.horizon(h).(m)(indexstart:indexend, :);
                 elseif flag_pool == 1
-                    tmp = results_eval.priors(p).pool.horizon(h).(m)(indexstart:indexend);
+                    tmp = results_eval.priors(p).pool.horizon(h).(m)(indexstart:indexend, :);
                 else
-                    tmp = results_eval.priors(p).R(r).horizon(h).(m)(indexstart:indexend);
+                    tmp = results_eval.priors(p).R(r).horizon(h).(m)(indexstart:indexend, :);
                 end
                 if strcmp(m, 'sfe')
-                    vals(counter) = sqrt(mean(tmp));
+                    vals(counter) = mean(sqrt(mean(tmp, 1))); % RMSFE is calculated for each draw, then averaged!
                 else
                     vals(counter) = mean(tmp);
                 end
