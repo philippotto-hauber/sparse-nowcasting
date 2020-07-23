@@ -2,6 +2,11 @@
 codes for project with Christian on nowcasting with sparse factor models
 - -------------------------------------------------------------------------------
 
+## branches
+
+- run_christian: stores not only the predictive density but also the draws of the factors and the loadings. 
+
+- -------------------------------------------------------------------------------
 repo structure
 
 * /data
