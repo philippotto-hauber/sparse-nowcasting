@@ -8,10 +8,12 @@ evaloptions = load_evaloptions(flag_country) ;
 % - directories ---
 % ----------------------------
 dir_truegdp = '' ;
+%dir_truegdp = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\out\';
 dir_models = ['../PH_' flag_country '/matfiles/'] ; 
-%dir_models = []; 
+%dir_models = ['../../../Dissertation/sparse nowcasting/documentation/PH_' flag_country '/'];
+   
 dir_benchmark = ['benchmark_' flag_country '/'] ; 
-%dir_benchmark = [] ; 
+%dir_benchmark = ['../../../Dissertation/sparse nowcasting/documentation/benchmark_' flag_country '/'] ; 
 dir_out = ['results_eval mat files/'] ; 
 if exist(dir_out, 'dir') ~= 7;mkdir(dir_out); end  
 
@@ -105,7 +107,7 @@ for p = evaloptions.Npriorspecs
                     
                     % - store squared forecast errors, log score and crps
                     % -------------------------
-                    results_eval.benchmark_BAR.horizon(h).sfe(q,:) = (draws_temp - truegdp) .^ 2;
+                    results_eval.benchmark_BAR.horizon(h).sfe(q,:) = f_computesfe(draws_temp, truegdp, evaloptions.computesfe);;
                     results_eval.benchmark_BAR.horizon(h).logscore(q,1) = f_computelogscore(draws_temp, truegdp, evaloptions.computelogscore);
                     results_eval.benchmark_BAR.horizon(h).crps(q,1) = f_computeCRPS(draws_temp', truegdp); % crps ;
                 end
@@ -137,13 +139,13 @@ for p = evaloptions.Npriorspecs
 
                     % - compute squared forecast errors, log score and
                     % -----------------------------
-                    results_eval.priors(p).R(r).horizon(h).sfe(q,:) = (draws_temp - truegdp) .^ 2;
+                    results_eval.priors(p).R(r).horizon(h).sfe(q,:) = f_computesfe(draws_temp, truegdp, evaloptions.computesfe);
                     results_eval.priors(p).R(r).horizon(h).logscore(q,1) = f_computelogscore(draws_temp, truegdp, evaloptions.computelogscore);
                     results_eval.priors(p).R(r).horizon(h).crps(q,1)= f_computeCRPS(draws_temp', truegdp);
                 else
                     % equal weight pool
                     results_eval.priors(p).pool.horizon(h).dens{q} = f_pooldens_eqwgts(dens_pool , evaloptions.Nmultpool*evaloptions.Ndraws ) ;
-                    results_eval.priors(p).pool.horizon(h).sfe(q,:) = (results_eval.priors(p).pool.horizon(h).dens{q} - truegdp) .^ 2;
+                    results_eval.priors(p).pool.horizon(h).sfe(q,:) = f_computesfe(results_eval.priors(p).pool.horizon(h).dens{q}, truegdp, evaloptions.computesfe);
                     results_eval.priors(p).pool.horizon(h).logscore(q,1) = f_computelogscore(results_eval.priors(p).pool.horizon(h).dens{q}, truegdp, evaloptions.computelogscore);
                     results_eval.priors(p).pool.horizon(h).crps(q,1) = f_computeCRPS(results_eval.priors(p).pool.horizon(h).dens{q},truegdp);
                 end                    
@@ -203,6 +205,14 @@ for m = 1 : Nreplics
     dens_temp = dens{ 1 , indic_dens } ;
     denspool(1,m) = dens_temp( indic_draws );
 end
+end
+
+function sfe = f_computesfe(draws, truegdp, flag_computesfe)
+    if strcmp(flag_computesfe, 'mean')
+        sfe = (mean(draws) - truegdp)^2;
+    else
+        sfe = (draws - truegdp) .^ 2;
+    end
 end
 
 function logscore = f_computelogscore(draws,truegdp,flag_computelogscore)
