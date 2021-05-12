@@ -37,7 +37,7 @@ set(0,'DefaultFigureVisible','off')
 % ----------------------------
 % - switches -----------------
 % ----------------------------
-switch_eval_matfiles = 'off' ; 
+switch_eval_matfiles = 'on' ; 
 switch_eval_tables = 'off' ; 
 switch_eval_pointnowcasts = 'off' ; 
 switch_eval_cumsum = 'off' ; 
