@@ -4,10 +4,11 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     % ------------------------------------------------------------------- %
     dir_save = 'latex_tables/' ; 
     if exist(dir_save, 'dir') ~= 7;mkdir(dir_save); end  
-
+    dir_in = [];
+    
     % - load eval structure and options --------------------------------- %
     % ------------------------------------------------------------------- %
-    load(['results_eval mat files/results_eval_' flag_country '_' flag_sample '_' flag_survey '_Np' num2str(Np) '_' flag_truegdp '.mat'])
+    load([dir_in, 'results_eval mat files/results_eval_' flag_country '_' flag_sample '_' flag_survey '_Np' num2str(Np) '_' flag_truegdp '.mat'])
     evaloptions = load_evaloptions(flag_country);
 
     % - USER INPUT ------------------------------------------------------ %
@@ -22,14 +23,15 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     evaloptions.indexstarts = evaloptions.indexstarts([1 3]);
     evaloptions.indexends = evaloptions.indexends([1 3]);
     evaloptions.names_subsamples = {'full sample', 'post-crisis sample'};
+    
+    % priors (exclude MG, names stay the same!)
+    evaloptions.Npriorspecs = [5 1 3 4] ; % 1: Normal, 2: MG, 3: PMNM, 4: HS++ 5:Normal-diffuse
+    evaloptions.names_priors = {'NIG', 'MG', 'PMNM', 'HS+', 'Nd'};
 
     % forecast evaluation metrics
     evaloptions.metrics = {'sfe', 'logscore', 'crps'}; 
     evaloptions.names_metrics = {'RMSFE', 'logS', 'CRPS'}; 
     
-    % prior names
-    evaloptions.names_priors = {'NIG', 'MG', 'PMNM', 'HS+', 'Nd'};
-
     % label
     str_label = ['table:' flag_country '_' flag_truegdp '_' flag_survey '_' flag_sample '_Np' num2str(Np)];
     
