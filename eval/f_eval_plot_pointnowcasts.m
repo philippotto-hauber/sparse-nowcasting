@@ -9,6 +9,7 @@ function f_eval_plot_pointnowcasts(flag_survey, flag_sample, flag_truegdp, Np, f
     dir_save = [pwd '/' flag_country '/' flag_survey ' ' flag_sample '/Np = ' num2str(Np) '/' flag_truegdp '/graphs/'] ; 
     if exist(dir_save, 'dir') ~= 7;mkdir(dir_save); end  
     dir_truegdp = '' ;
+    dir_truegdp = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\out\';
 
     % - load forecast structure
     % -----------------
@@ -87,7 +88,7 @@ function f_eval_plot_pointnowcasts(flag_survey, flag_sample, flag_truegdp, Np, f
                 end
 
                 % append B-AR benchmark
-                dens_medians(counter_p + 1,:) = median( results_eval.benchmark_BAR.horizon(h).dens( indexstart : indexend , : ) , 2 ) ;
+                dens_medians(counter_p,:) = median( results_eval.benchmark_BAR.horizon(h).dens( indexstart : indexend , : ) , 2 ) ;
                 %dens_upper(p+1,:) = prctile( results_eval.benchmark_BAR.horizon(h).dens( indexstart : indexend , : ) , 75 , 2 ) ;
                 %dens_lower(p+1,:) = prctile( results_eval.benchmark_BAR.horizon(h).dens( indexstart : indexend , : ) , 25 , 2 ) ;
 
