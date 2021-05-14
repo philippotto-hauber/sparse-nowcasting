@@ -210,6 +210,8 @@ end
 function sfe = f_computesfe(draws, truegdp, flag_computesfe)
     if strcmp(flag_computesfe, 'mean')
         sfe = (mean(draws) - truegdp)^2;
+    elseif strcmp(flag_computesfe, 'median')
+        sfe = (median(draws) -truegdp)^2;
     elseif strcmp(flag_computesfe, 'distr')
         sfe = (draws - truegdp) .^ 2;
     end
