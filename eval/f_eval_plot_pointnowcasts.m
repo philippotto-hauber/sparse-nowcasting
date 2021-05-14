@@ -9,7 +9,6 @@ function f_eval_plot_pointnowcasts(flag_survey, flag_sample, flag_truegdp, Np, f
     dir_save = [pwd '/' flag_country '/' flag_survey ' ' flag_sample '/Np = ' num2str(Np) '/' flag_truegdp '/graphs/'] ; 
     if exist(dir_save, 'dir') ~= 7;mkdir(dir_save); end  
     dir_truegdp = '' ;
-    dir_truegdp = 'C:\Users\Philipp\Documents\Dissertation\sparse nowcasting\data\out\';
 
     % - load forecast structure
     % -----------------
