@@ -19,6 +19,7 @@ function f_eval_plot_cumsum(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     filename_pdf = [dir_save 'graphs_cumsum.pdf'] ; 
     
     if isfile(filename_pdf); delete(filename_pdf); end
+    if isfile(filename_ps); delete(filename_ps); end
     
     % - graph labels
     % --------------------------

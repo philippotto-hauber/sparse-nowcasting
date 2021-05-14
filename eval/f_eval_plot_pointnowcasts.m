@@ -24,6 +24,7 @@ function f_eval_plot_pointnowcasts(flag_survey, flag_sample, flag_truegdp, Np, f
     filename_pdf = [dir_save 'graphs_pointnowcasts.pdf'] ; 
     
     if isfile(filename_pdf); delete(filename_pdf); end
+    if isfile(filename_ps); delete(filename_ps); end
     
     % - graph labels
     % --------------------------
