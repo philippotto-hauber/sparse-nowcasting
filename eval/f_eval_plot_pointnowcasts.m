@@ -154,7 +154,7 @@ plot(means(4,1:length(truegdp)/2),'Color',[0 0 1],'LineStyle',':','LineWidth',0.
 %plot(lower(4,:),'Color',[0 0 1],'LineStyle',':','LineWidth',0.8);
 
 p6 = plot(means(5,1:length(truegdp)/2),'o','MarkerEdgeColor',[0 0.5 0.5],'MarkerSize',8);
-plot(means(5,1:length(truegdp)/2),'Color',[0 0 0],'LineStyle',':','LineWidth',0.01);
+plot(means(5,1:length(truegdp)/2),'Color',[0 0.5 0.5],'LineStyle',':','LineWidth',0.01);
 
 p7 = plot(means(6,1:length(truegdp)/2),'o','MarkerEdgeColor',[0 0 0],'MarkerSize',8);
 plot(means(6,1:length(truegdp)/2),'Color',[0 0 0],'LineStyle',':','LineWidth',0.01);
@@ -211,7 +211,7 @@ plot(means(4, length(truegdp)/2 + 1 : end ),'Color',[0 0 1],'LineStyle',':','Lin
 %plot(lower(4,:),'Color',[0 0 1],'LineStyle',':','LineWidth',0.8);
 
 p6 = plot(means(5 , length(truegdp)/2 + 1 : end ),'o','MarkerEdgeColor',[0 0.5 0.5 ],'MarkerSize',8);
-plot(means(5, length(truegdp)/2 + 1 : end ),'Color',[0 0 0],'LineStyle',':','LineWidth',0.01);
+plot(means(5, length(truegdp)/2 + 1 : end ),'Color',[0.5 0.5 0.5],'LineStyle',':','LineWidth',0.01);
 
 p7 = plot(means(6 , length(truegdp)/2 + 1 : end ),'o','MarkerEdgeColor',[0 0 0],'MarkerSize',8);
 plot(means(6, length(truegdp)/2 + 1 : end ),'Color',[0 0 0],'LineStyle',':','LineWidth',0.01);
