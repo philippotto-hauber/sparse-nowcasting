@@ -16,7 +16,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     fontsize = 'scriptsize'; % 
     linestep = '0.0'; % step size between model blocks
 
-    evaloptions.Nhs = [2] ; % forecast horizons
+    evaloptions.Nhs = [2 4] ; % forecast horizons
     evaloptions.Nrs = [1, 2, 5, 8] ; % # of factors to include in the table (pool always included and note that it is calculated over Nr = 1:10)
 
     % subsamples
