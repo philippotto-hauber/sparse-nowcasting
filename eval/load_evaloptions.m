@@ -7,7 +7,7 @@ function evaloptions = load_evaloptions(flag_country)
     evaloptions.Nhs = 4 ; % # of horizons, i.e. nowcasts per quarter
     evaloptions.Nmultpool = 1 ; % factor by which Ndraws is multiplied when pooling (to get "smoother" pools!)
     evaloptions.computelogscore = 'kde' ; 
-    evaloptions.computesfe = 'median'; % 'distr', 'median', 'mean'
+    evaloptions.computesfe = 'distr'; % 'distr', 'median', 'mean'
     if strcmp(flag_country, 'GER')
         evaloptions.Nquarters = 52; % # of quarters
         evaloptions.multfac = 1 ; 
