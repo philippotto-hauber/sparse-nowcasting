@@ -16,7 +16,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     fontsize = 'scriptsize'; % 
     linestep = '0.0'; % step size between model blocks
 
-    evaloptions.Nhs = [2 4] ; % forecast horizons
+    evaloptions.Nhs = [2] ; % forecast horizons
     evaloptions.Nrs = [1, 2, 5, 8] ; % # of factors to include in the table (pool always included and note that it is calculated over Nr = 1:10)
 
     % subsamples
@@ -25,7 +25,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     evaloptions.names_subsamples = {'full sample', 'post-crisis sample'};
     
     % priors (exclude MG, names stay the same!)
-    evaloptions.Npriorspecs = [5 1 3 4] ; % 1: Normal, 2: MG, 3: PMNM, 4: HS++ 5:Normal-diffuse
+    evaloptions.Npriorspecs = [5 2 1 3 4] ; % 1: Normal, 2: MG, 3: PMNM, 4: HS++ 5:Normal-diffuse
     evaloptions.names_priors = {'NIG', 'MG', 'PMNM', 'HS+', 'Nd'};
 
     % forecast evaluation metrics
