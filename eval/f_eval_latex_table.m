@@ -37,7 +37,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     
     % caption
     if strcmp(flag_country, 'GER'); name_country = 'Germany'; elseif strcmp(flag_country, 'US'); name_country = 'United States'; end
-    str_caption = [name_country ' (' flag_truegdp ', ' flag_survey ', ' flag_sample ')']; 
+    str_caption = ['Additional results: ' name_country ' (' flag_truegdp ', ' flag_survey ', ' flag_sample ')']; 
 
     % notes to table
     if strcmp(flag_country, 'GER')
