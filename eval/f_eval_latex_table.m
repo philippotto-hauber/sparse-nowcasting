@@ -25,7 +25,7 @@ function f_eval_latex_table(flag_survey, flag_sample, flag_truegdp, Np, flag_cou
     evaloptions.names_subsamples = {'full sample', 'post-crisis sample'};
     
     % priors (exclude MG, names stay the same!)
-    evaloptions.Npriorspecs = [5 2 1 3 4] ; % 1: Normal, 2: MG, 3: PMNM, 4: HS++ 5:Normal-diffuse
+    evaloptions.Npriorspecs = [5 1 2 3 4] ; % 1: Normal, 2: MG, 3: PMNM, 4: HS++ 5:Normal-diffuse
     evaloptions.names_priors = {'NIG', 'MG', 'PMNM', 'HS+', 'Nd'};
 
     % forecast evaluation metrics
