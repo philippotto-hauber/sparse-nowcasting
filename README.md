@@ -1,7 +1,5 @@
 # sparse-nowcasting
-codes for sparse factor model for nowcasting US and German GDP
-
-The resulting paper can be found [here](https://www.econstor.eu/bitstream/10419/251551/1/Philipp-Hauber-2021-Realtime-nowcasting-with-sparse-factor-models.pdf)
+This repo contains the codes for my paper "Real-time nowcasting with sparse factor models"](https://www.econstor.eu/bitstream/10419/251551/1/Philipp-Hauber-2021-Realtime-nowcasting-with-sparse-factor-models.pdf)
 - -------------------------------------------------------------------------------
 
 ## branches
