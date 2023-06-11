@@ -1,5 +1,7 @@
 # sparse-nowcasting
-codes for project with Christian on nowcasting with sparse factor models
+codes for sparse factor model for nowcasting US and German GDP
+
+The resulting paper can be found [here](https://www.econstor.eu/bitstream/10419/251551/1/Philipp-Hauber-2021-Realtime-nowcasting-with-sparse-factor-models.pdf)
 - -------------------------------------------------------------------------------
 
 ## branches
